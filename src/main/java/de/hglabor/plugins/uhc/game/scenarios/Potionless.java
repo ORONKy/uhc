@@ -11,7 +11,7 @@ public class Potionless extends Scenario {
     public final static Potionless INSTANCE = new Potionless();
 
     private Potionless() {
-        super("Shieldless", new ItemBuilder(Material.POTION).build());
+        super("Potionless", new ItemBuilder(Material.POTION).build());
     }
 
     @EventHandler
