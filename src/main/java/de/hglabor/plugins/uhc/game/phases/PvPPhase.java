@@ -7,6 +7,7 @@ import de.hglabor.plugins.uhc.game.Scenario;
 import de.hglabor.plugins.uhc.game.mechanics.border.Border;
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
 import de.hglabor.plugins.uhc.game.scenarios.Timber;
+import de.hglabor.plugins.uhc.player.PlayerList;
 import de.hglabor.utils.noriskutils.TimeConverter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -25,6 +26,9 @@ public class PvPPhase extends IngamePhase {
     @Override
     protected void tick(int timer) {
         Border border = GameManager.INSTANCE.getBorder();
+        if (PlayerList.INSTANCE.getAlivePlayers().size() == 1) {
+            startNextPhase();
+        }
         border.announceBorderShrink(timer);
         Bukkit.getOnlinePlayers().forEach(player -> {
             if (border.getBorderSize() > border.getShortestBorderSize()) {
@@ -46,7 +50,5 @@ public class PvPPhase extends IngamePhase {
     }
 
     @Override
-    protected GamePhase getNextPhase() {
-        return null;
-    }
+    protected GamePhase getNextPhase() { return EndPhase.INSTANCE; }
 }
