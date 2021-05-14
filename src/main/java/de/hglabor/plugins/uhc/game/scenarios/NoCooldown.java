@@ -24,4 +24,14 @@ public class NoCooldown extends Scenario {
             }
         }
     }
+
+    @Override
+    public void onFarmPhase() {
+        for (Player player : Bukkit.getOnlinePlayers()) {
+            AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_ATTACK_SPEED);
+            if (attribute != null) {
+                attribute.setBaseValue(100);
+            }
+        }
+    }
 }
