@@ -36,9 +36,7 @@ public class Timber extends Scenario {
 
         if (blockTypeName.contains("wood") || blockTypeName.contains("log")) {
             block.breakNaturally();
-
-            BlockFace[] faces = {BlockFace.DOWN, BlockFace.UP, BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
-            for (BlockFace face : faces) {
+            for (BlockFace face : BlockFace.values()) {
                 breakSurroundingWood(block.getRelative(face), amount++);
             }
         }
