@@ -17,9 +17,12 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.UUID;
 
 public class FarmPhase extends IngamePhase {
     private final int finalHeal;
@@ -37,15 +40,16 @@ public class FarmPhase extends IngamePhase {
 
     @Override
     protected void init() {
-        GameManager.INSTANCE.enableScenarios();
-        Bukkit.getPluginManager().registerEvents(CombatLogger.INSTANCE, Uhc.getPlugin());
+        GameManager.INSTANCE.registerScenarioEvents();
+        Bukkit.getPluginManager().registerEvents(CombatLogger.INSTANCE, Uhc.Companion.getINSTANCE());
         Bukkit.broadcastMessage(GlobalChat.getPrefix() + GlobalChat.hexColor("#F45959") + "You are now able to relog");
         for (Player player : Bukkit.getOnlinePlayers()) {
-            player.sendTitle( GlobalChat.hexColor("#EC2828") + "UHC" + ChatColor.WHITE + " | " + GlobalChat.hexColor("#F45959") + "Farmphase",
+            player.sendTitle(GlobalChat.hexColor("#EC2828") + "UHC" + ChatColor.WHITE + " | " + GlobalChat.hexColor("#F45959") + "Farmphase",
                     ChatColor.GOLD + "gl hf", 20, 20, 20);
             player.setHealth(20);
             player.setSaturation(20);
             player.setFireTicks(0);
+            player.getInventory().clear();
             player.getInventory().addItem(new ItemStack(Material.COOKED_BEEF, 20));
             PotionUtils.removePotionEffects(player);
         }
@@ -72,14 +76,14 @@ public class FarmPhase extends IngamePhase {
             case BORDER:
                 Bukkit.getOnlinePlayers().forEach(player -> {
                     Border border = GameManager.INSTANCE.getBorder();
-                    player.sendActionBar( GlobalChat.hexColor("#EC2828") + "Next bordershrink " + border.getNextBorderSize() + " in: " + ChatColor.GRAY + TimeConverter.stringify(border.getNextShrinkTime() - timer));
+                    player.sendActionBar(GlobalChat.hexColor("#EC2828") + "Next bordershrink " + border.getNextBorderSize() + " in: " + ChatColor.GRAY + TimeConverter.stringify(border.getNextShrinkTime() - timer));
                 });
                 break;
             case FINALHEAL:
-                Bukkit.getOnlinePlayers().forEach(player -> player.sendActionBar( GlobalChat.hexColor("#EC2828") + "Final-Heal in: " + ChatColor.GRAY + TimeConverter.stringify(finalHeal - timer)));
+                Bukkit.getOnlinePlayers().forEach(player -> player.sendActionBar(GlobalChat.hexColor("#EC2828") + "Final-Heal in: " + ChatColor.GRAY + TimeConverter.stringify(finalHeal - timer)));
                 break;
             case INVINCIBILITY:
-                Bukkit.getOnlinePlayers().forEach(player -> player.sendActionBar( GlobalChat.hexColor("#EC2828") + "Schutzzeit endet in: " + ChatColor.GRAY + TimeConverter.stringify(maxPhaseTime - timer)));
+                Bukkit.getOnlinePlayers().forEach(player -> player.sendActionBar(GlobalChat.hexColor("#EC2828") + "Schutzzeit endet in: " + ChatColor.GRAY + TimeConverter.stringify(maxPhaseTime - timer)));
                 break;
         }
 
@@ -107,10 +111,10 @@ public class FarmPhase extends IngamePhase {
         if (timeLeft == 0) {
             wasFinalHeal = true;
             Bukkit.getOnlinePlayers().forEach(player -> player.setHealth(20));
-            Bukkit.broadcastMessage(GlobalChat.getPrefix() +  GlobalChat.hexColor("#EC2828") + ChatColor.BOLD + "Final Heal");
+            Bukkit.broadcastMessage(GlobalChat.getPrefix() + GlobalChat.hexColor("#EC2828") + ChatColor.BOLD + "Final Heal");
         } else if (timeLeft % (2 * 60) == 0) {
             String timeString = TimeConverter.stringify(timeLeft);
-            Bukkit.broadcastMessage(GlobalChat.getPrefix() +  GlobalChat.hexColor("#EC2828") + "Final-Heal in " + GlobalChat.hexColor("#F45959") + timeString);
+            Bukkit.broadcastMessage(GlobalChat.getPrefix() + GlobalChat.hexColor("#EC2828") + "Final-Heal in " + GlobalChat.hexColor("#F45959") + timeString);
         }
     }
 
@@ -121,16 +125,16 @@ public class FarmPhase extends IngamePhase {
     private void announceNextPhase(int timer) {
         int timeLeft = maxPhaseTime - timer;
         if (timeLeft == 0) {
-            Bukkit.broadcastMessage(GlobalChat.getPrefix() +  GlobalChat.hexColor("#EC2828") + ChatColor.BOLD + "PvP has been enabled");
+            Bukkit.broadcastMessage(GlobalChat.getPrefix() + GlobalChat.hexColor("#EC2828") + ChatColor.BOLD + "PvP has been enabled");
         } else if (timeLeft % (5 * 60) == 0) {
             String timeString = TimeConverter.stringify(timeLeft);
-            Bukkit.broadcastMessage(GlobalChat.getPrefix() +  GlobalChat.hexColor("#EC2828") + "PvP enabled in " + GlobalChat.hexColor("#F45959") + timeString);
+            Bukkit.broadcastMessage(GlobalChat.getPrefix() + GlobalChat.hexColor("#EC2828") + "PvP enabled in " + GlobalChat.hexColor("#F45959") + timeString);
         }
     }
 
     @Override
     public String getTimeString(int timer) {
-        return  GlobalChat.hexColor("#EC2828") + "Duration: " + GlobalChat.hexColor("#F45959") + TimeConverter.stringify(timer);
+        return GlobalChat.hexColor("#EC2828") + "Duration: " + GlobalChat.hexColor("#F45959") + TimeConverter.stringify(timer);
     }
 
     @Override
@@ -142,6 +146,15 @@ public class FarmPhase extends IngamePhase {
     private void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
         if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
             event.setCancelled(true);
+        }
+
+        if ((event.getEntity() instanceof Zombie)) {
+            Zombie zombie = (Zombie) event.getEntity();
+            for (UUID uuid : CombatLogger.INSTANCE.inventories.keySet()) {
+                if (zombie.hasMetadata(uuid.toString())) {
+                    event.setCancelled(true);
+                }
+            }
         }
     }
 }
