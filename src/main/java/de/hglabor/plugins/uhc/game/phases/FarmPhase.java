@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
@@ -147,7 +148,10 @@ public class FarmPhase extends IngamePhase {
         if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
             event.setCancelled(true);
         }
+    }
 
+    @EventHandler
+    private void onEntityDamage(EntityDamageEvent event) {
         if ((event.getEntity() instanceof Zombie)) {
             Zombie zombie = (Zombie) event.getEntity();
             for (UUID uuid : CombatLogger.INSTANCE.inventories.keySet()) {

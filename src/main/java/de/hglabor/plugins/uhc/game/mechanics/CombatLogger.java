@@ -32,7 +32,7 @@ import java.util.*;
 
 public final class CombatLogger implements Listener {
     public final static CombatLogger INSTANCE = new CombatLogger();
-    private final Map<UUID, Inventory> inventories;
+    public final Map<UUID, Inventory> inventories;
     private final OfflineTimer offlineTimer;
 
     private CombatLogger() {
@@ -59,7 +59,7 @@ public final class CombatLogger implements Listener {
             offlineTimer.stopTimer(uhcPlayer);
             Optional.ofNullable(Bukkit.getEntity(uhcPlayer.getCombatLogMob())).ifPresent(entity -> {
                 inventories.remove(entity.getUniqueId());
-                entity.removeMetadata(player.getUniqueId().toString(), Uhc.getPlugin());
+                entity.removeMetadata(player.getUniqueId().toString(), Uhc.Companion.getINSTANCE());
                 entity.remove();
             });
         }
@@ -102,7 +102,7 @@ public final class CombatLogger implements Listener {
         Zombie zombie = (Zombie) player.getWorld().spawnEntity(player.getLocation(), EntityType.ZOMBIE);
         uhcPlayer.setCombatLogMob(zombie.getUniqueId());
         inventories.put(player.getUniqueId(), player.getInventory());
-        zombie.setMetadata(player.getUniqueId().toString(), new FixedMetadataValue(Uhc.getPlugin(), ""));
+        zombie.setMetadata(player.getUniqueId().toString(), new FixedMetadataValue(Uhc.Companion.getINSTANCE(), ""));
         zombie.setCustomName(player.getName());
         zombie.setCustomNameVisible(true);
         zombie.setCanPickupItems(false);
