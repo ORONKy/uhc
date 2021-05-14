@@ -34,7 +34,7 @@ object ConfigInventory {
                 }
             }
 
-            page(1) {
+            page(2) {
                 val compound = createRectCompound<Scenario>(Slots.RowTwoSlotTwo, Slots.RowFourSlotEight,
                     iconGenerator = { scenario ->
                         ItemBuilder(scenario.displayItem).setName("${KColors.DODGERBLUE}${scenario.name}")
