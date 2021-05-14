@@ -1,6 +1,7 @@
 package de.hglabor.plugins.uhc.game.phases;
 
 import de.hglabor.plugins.uhc.config.CKeys;
+import de.hglabor.plugins.uhc.config.ConfigInventory;
 import de.hglabor.plugins.uhc.config.UHCConfig;
 import de.hglabor.plugins.uhc.game.GameManager;
 import de.hglabor.plugins.uhc.game.GamePhase;
@@ -12,6 +13,7 @@ import de.hglabor.utils.noriskutils.TimeConverter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.World;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -81,6 +83,12 @@ public class LobbyPhase extends GamePhase {
         player.setGameMode(GameMode.ADVENTURE);
         UHCPlayer uhcPlayer = playerList.getPlayer(player);
         player.teleport(lobby.getSpawnLocation());
+        player.getInventory().clear();
+        player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(4.0);
+
+        if (player.hasPermission("hglabor.forcestart")) {
+            player.getInventory().setItem(4, ConfigInventory.INSTANCE.getLobbyPhaseItem());
+        }
     }
 
     @EventHandler
@@ -112,6 +120,13 @@ public class LobbyPhase extends GamePhase {
     @EventHandler
     private void onPlayerInteract(PlayerInteractEvent event) {
         event.setCancelled(true);
+
+        if (event.getItem() == null) return;
+        if (event.getItem().equals(ConfigInventory.INSTANCE.getLobbyPhaseItem())) {
+            if (event.getPlayer().hasPermission("hglabor.forcestart")) {
+                ConfigInventory.INSTANCE.openGUI(event.getPlayer());
+            }
+        }
     }
 
     @EventHandler
