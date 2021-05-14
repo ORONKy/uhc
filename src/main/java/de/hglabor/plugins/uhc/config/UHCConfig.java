@@ -7,7 +7,7 @@ import org.bukkit.World;
 public class UHCConfig {
 
     public static void load() {
-        Uhc plugin = Uhc.getPlugin();
+        Uhc plugin = Uhc.Companion.getINSTANCE();
 
         //LOBBY
         plugin.getConfig().addDefault(CKeys.LOBBY_START_TIME, 60 * 15);
@@ -68,18 +68,18 @@ public class UHCConfig {
     }
 
     public static int getInteger(String key) {
-        return Uhc.getPlugin().getConfig().getInt(key);
+        return Uhc.Companion.getINSTANCE().getConfig().getInt(key);
     }
 
     public static String getString(String key) {
-        return Uhc.getPlugin().getConfig().getString(key);
+        return Uhc.Companion.getINSTANCE().getConfig().getString(key);
     }
 
     public static double getDouble(String key) {
-        return Uhc.getPlugin().getConfig().getDouble(key);
+        return Uhc.Companion.getINSTANCE().getConfig().getDouble(key);
     }
 
     public static boolean getBoolean(String key) {
-        return Uhc.getPlugin().getConfig().getBoolean(key);
+        return Uhc.Companion.getINSTANCE().getConfig().getBoolean(key);
     }
 }

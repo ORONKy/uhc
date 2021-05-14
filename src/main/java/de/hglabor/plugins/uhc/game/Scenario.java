@@ -17,7 +17,7 @@ public abstract class Scenario implements Listener {
     }
 
     protected void saveToConfig() {
-        Uhc plugin = Uhc.getPlugin();
+        Uhc plugin = Uhc.Companion.getINSTANCE();
         plugin.getConfig().addDefault(CKeys.SCENARIOS + "." + getName() + "." + "enabled", false);
         plugin.getConfig().options().copyDefaults(true);
         plugin.saveConfig();

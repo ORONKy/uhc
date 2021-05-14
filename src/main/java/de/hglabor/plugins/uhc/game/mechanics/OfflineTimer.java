@@ -3,7 +3,6 @@ package de.hglabor.plugins.uhc.game.mechanics;
 import de.hglabor.plugins.uhc.Uhc;
 import de.hglabor.plugins.uhc.player.UHCPlayer;
 import de.hglabor.plugins.uhc.player.UserStatus;
-import org.bukkit.Bukkit;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -32,7 +31,7 @@ public class OfflineTimer {
                     cancel();
                 }
             }
-        }.runTaskTimer(Uhc.getPlugin(), 0, 20L);
+        }.runTaskTimer(Uhc.Companion.getINSTANCE(), 0, 20L);
         offlinePlayers.put(uhcPlayer.getUuid(), bukkitTask);
     }
 

@@ -35,12 +35,12 @@ public class GoldenHead implements Listener {
     }
 
     public void register() {
-        NamespacedKey key = new NamespacedKey(Uhc.getPlugin(), "golden_head");
+        NamespacedKey key = new NamespacedKey(Uhc.Companion.getINSTANCE(), "golden_head");
         ShapedRecipe recipe = new ShapedRecipe(key, itemStack);
         recipe.shape("GGG", "GHG", "GGG"); // haha ghg
         recipe.setIngredient('G', Material.GOLD_INGOT);
         recipe.setIngredient('H', Material.PLAYER_HEAD);
-        Uhc.getPlugin().getServer().addRecipe(recipe);
+        Uhc.Companion.getINSTANCE().getServer().addRecipe(recipe);
     }
 
     public ItemStack getHeadItem() {

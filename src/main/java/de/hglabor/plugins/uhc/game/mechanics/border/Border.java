@@ -98,7 +98,7 @@ public class Border {
     }
 
     private void borderPacket() {
-        Bukkit.getScheduler().runTaskTimer(Uhc.getPlugin(), () -> {
+        Bukkit.getScheduler().runTaskTimer(Uhc.Companion.getINSTANCE(), () -> {
             for (Player player : Bukkit.getOnlinePlayers()) {
                 isNearBorder(player, 10);
             }
@@ -157,7 +157,7 @@ public class Border {
                 for (int z = -size; z <= size; z++) {
                     Location newState = toChange.clone().add(0, y, z);
                     sendBlockChange(player, newState);
-                    Bukkit.getScheduler().runTaskLater(Uhc.getPlugin(), () -> removeBlockChange(player, newState, puffer), 2);
+                    Bukkit.getScheduler().runTaskLater(Uhc.Companion.getINSTANCE(), () -> removeBlockChange(player, newState, puffer), 2);
                 }
             }
         }
@@ -169,7 +169,7 @@ public class Border {
                 for (int x = -size; x <= size; x++) {
                     Location newState = toChange.clone().add(x, y, 0);
                     sendBlockChange(player, newState);
-                    Bukkit.getScheduler().runTaskLater(Uhc.getPlugin(), () -> removeBlockChange(player, newState, puffer), 2);
+                    Bukkit.getScheduler().runTaskLater(Uhc.Companion.getINSTANCE(), () -> removeBlockChange(player, newState, puffer), 2);
                 }
             }
         }
@@ -187,7 +187,7 @@ public class Border {
         if (v > puffer * puffer) {
             player.sendBlockChange(location, location.getBlock().getBlockData());
         } else {
-            Bukkit.getScheduler().runTaskLater(Uhc.getPlugin(), () -> removeBlockChange(player, location, puffer), 2);
+            Bukkit.getScheduler().runTaskLater(Uhc.Companion.getINSTANCE(), () -> removeBlockChange(player, location, puffer), 2);
         }
     }
 

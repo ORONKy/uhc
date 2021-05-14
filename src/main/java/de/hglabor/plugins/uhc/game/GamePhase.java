@@ -17,7 +17,7 @@ public abstract class GamePhase implements Listener {
     protected GamePhase(int maxPhaseTime, PhaseType type) {
         this.maxPhaseTime = maxPhaseTime;
         this.type = type;
-        this.plugin = Uhc.getPlugin();
+        this.plugin = Uhc.Companion.getINSTANCE();
         this.playerList = PlayerList.INSTANCE;
     }
 

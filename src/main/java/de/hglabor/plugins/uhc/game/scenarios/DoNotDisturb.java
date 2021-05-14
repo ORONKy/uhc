@@ -77,7 +77,7 @@ public class DoNotDisturb extends Scenario {
                     player.sendMessage(Localization.INSTANCE.getMessage("scenario.nocleanplus.end", ChatUtils.locale(player)));
                     threads.remove(player);
                 }
-            }.runTaskLater(Uhc.getPlugin(), 20 * 20);
+            }.runTaskLater(Uhc.Companion.getINSTANCE(), 20 * 20);
         }
 
         public void resetRunnable() {

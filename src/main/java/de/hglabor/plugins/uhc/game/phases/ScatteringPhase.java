@@ -54,7 +54,7 @@ public class ScatteringPhase extends GamePhase {
             int amountToTeleport = UHCConfig.getInteger(CKeys.SCATTER_AMOUNT_TO_TELEPORT_EACH_TIME);
             int teleportDelay = UHCConfig.getInteger(CKeys.SCATTER_TELEPORT_DELAY);
             PlayerScattering playerScattering = new PlayerScattering(playerList.getScatteringPlayers(), amountToTeleport);
-            playerScattering.runTaskTimer(Uhc.getPlugin(), 0, teleportDelay);
+            playerScattering.runTaskTimer(Uhc.Companion.getINSTANCE(), 0, teleportDelay);
         }
     }
 

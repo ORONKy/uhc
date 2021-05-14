@@ -38,7 +38,7 @@ public class Timebomb extends Scenario {
             event.getDrops().clear();
             TBThread thread = new TBThread(player.getLocation().getBlock().getLocation(), items, 45);
             thread.placeAndFillChest();
-            thread.runTaskTimer(Uhc.getPlugin(), 20, 20);
+            thread.runTaskTimer(Uhc.Companion.getINSTANCE(), 20, 20);
         }
     }
 

@@ -95,7 +95,7 @@ public class NoClean extends Scenario {
                     player.sendMessage(Localization.INSTANCE.getMessage("scenario.noclean.end",  ChatUtils.locale(player)));
                     threads.remove(player);
                 }
-            }.runTaskLater(Uhc.getPlugin(), 20 * 30);
+            }.runTaskLater(Uhc.Companion.getINSTANCE(), 20 * 30);
         }
     }
 }

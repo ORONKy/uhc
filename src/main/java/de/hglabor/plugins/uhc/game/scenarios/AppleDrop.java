@@ -24,7 +24,7 @@ public class AppleDrop extends Scenario {
 
     @Override
     protected void saveToConfig() {
-        Uhc plugin = Uhc.getPlugin();
+        Uhc plugin = Uhc.Companion.getINSTANCE();
         plugin.getConfig().addDefault(CKeys.SCENARIOS + "." + getName() + "." + "dropRate", dropRate);
         super.saveToConfig();
     }
