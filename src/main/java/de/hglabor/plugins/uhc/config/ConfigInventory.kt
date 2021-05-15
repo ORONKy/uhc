@@ -50,7 +50,8 @@ object ConfigInventory {
                         }
                         clickEvent.guiInstance.reloadCurrentPage()
                         scenario.isEnabled = !scenario.isEnabled
-                        clickEvent.player.sendMessage("${KColors.DODGERBLUE}${scenario.name} ${KColors.WHITE}is now ${KColors.RED}${scenario.isEnabled}")
+                        val text = if (scenario.isEnabled) "${KColors.LIME}enabled" else "${KColors.RED}disabled"
+                        clickEvent.player.sendMessage("${KColors.DODGERBLUE}${scenario.name} ${KColors.WHITE}is now ${KColors.RED}$text")
                     })
                 setScrollableCompoundLayout(compound)
                 compound.setContent(GameManager.INSTANCE.scenarios)
