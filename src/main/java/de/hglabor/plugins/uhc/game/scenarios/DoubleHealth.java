@@ -16,7 +16,7 @@ public class DoubleHealth extends Scenario {
     }
 
     @Override
-    public void onPvPPhase() {
+    public void onFarmPhase() {
         for (Player player : Bukkit.getOnlinePlayers()) {
             AttributeInstance attribute = player.getAttribute(Attribute.GENERIC_MAX_HEALTH);
             if (attribute != null) {
