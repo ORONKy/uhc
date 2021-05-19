@@ -9,6 +9,7 @@ import de.hglabor.plugins.uhc.game.GamePhase;
 import de.hglabor.plugins.uhc.game.PhaseType;
 import de.hglabor.plugins.uhc.game.mechanics.PlayerScattering;
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
+import de.hglabor.plugins.uhc.game.scenarios.Teams;
 import de.hglabor.plugins.uhc.player.PlayerList;
 import de.hglabor.plugins.uhc.player.UHCPlayer;
 import de.hglabor.plugins.uhc.player.UserStatus;
@@ -51,6 +52,9 @@ public class ScatteringPhase extends GamePhase {
         int amountToTeleport = UHCConfig.getInteger(CKeys.SCATTER_AMOUNT_TO_TELEPORT_EACH_TIME);
         int teleportDelay = UHCConfig.getInteger(CKeys.SCATTER_TELEPORT_DELAY);
         PlayerScattering playerScattering = new PlayerScattering(playerList.getScatteringPlayers(), amountToTeleport);
+        if (Teams.INSTANCE.isEnabled()) {
+            Teams.INSTANCE.fillTeams();
+        }
         playerScattering.runTaskTimer(Uhc.Companion.getINSTANCE(), 0, teleportDelay);
     }
 

@@ -7,12 +7,15 @@ import de.hglabor.plugins.uhc.game.GameManager;
 import de.hglabor.plugins.uhc.game.GamePhase;
 import de.hglabor.plugins.uhc.game.PhaseType;
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
+import de.hglabor.plugins.uhc.game.scenarios.TeamInventory;
+import de.hglabor.plugins.uhc.game.scenarios.Teams;
 import de.hglabor.plugins.uhc.player.UHCPlayer;
 import de.hglabor.plugins.uhc.player.UserStatus;
 import de.hglabor.utils.noriskutils.TimeConverter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -126,6 +129,10 @@ public class LobbyPhase extends GamePhase {
             if (event.getPlayer().hasPermission("hglabor.forcestart")) {
                 ConfigInventory.INSTANCE.openGUI(event.getPlayer());
             }
+        }
+
+        if (event.getItem().equals(Teams.INSTANCE.getTeamConfigItem())) {
+            TeamInventory.INSTANCE.openGUI(event.getPlayer());
         }
     }
 

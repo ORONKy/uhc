@@ -11,12 +11,15 @@ import org.bukkit.event.inventory.InventoryType
 class UHCTeam(val leader: UHCPlayer, private val teamIndex: Int) {
     val players = mutableSetOf(leader)
     private val invitedPlayers = mutableListOf<UHCPlayer>()
-    val shouldFillTeam = true
+    var shouldFill = true
     val backpack = Bukkit.createInventory(null, InventoryType.CHEST, Component.text("Backpack"))
     var isEliminated = false
     val teamKills: Int
         get() = players.sumBy { it.kills.get() }
 
+    init {
+        leader.player.inventory.addItem(Teams.teamConfigItem)
+    }
     /**
      * invites player but invitation will be exipired
      */
@@ -107,6 +110,7 @@ class UHCTeam(val leader: UHCPlayer, private val teamIndex: Int) {
      * Team will be deleted if team leader leaves the team
      */
     private fun close() {
+        leader.player.inventory.remove(Teams.teamConfigItem)
         players.forEach {
             it.team = null
             it.teamIndex = -1
@@ -117,7 +121,12 @@ class UHCTeam(val leader: UHCPlayer, private val teamIndex: Int) {
     }
 
     // this will be used to fill the teams
-    fun forceJoin() {
-
+    fun forceJoin(uhcPlayer: UHCPlayer) {
+        uhcPlayer.team = this;
+        uhcPlayer.teamIndex = teamIndex
+        invitedPlayers.remove(uhcPlayer)
+        players.forEach { it.sendMessage("${KColors.GREEN}${uhcPlayer.name} wurde dem Team zugewiesen.") }
+        players.add(uhcPlayer)
+        uhcPlayer.sendMessage("${KColors.GREEN}Du wurdest dem Team von ${leader.name}[${teamIndex}] zugewiesen.")
     }
 }
