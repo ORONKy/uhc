@@ -86,7 +86,7 @@ public class LobbyPhase extends GamePhase {
         player.getInventory().clear();
         player.getAttribute(Attribute.GENERIC_ATTACK_SPEED).setBaseValue(4.0);
 
-        if (player.hasPermission("hglabor.forcestart")) {
+        if (player.hasPermission("group.admin")) {
             player.getInventory().setItem(4, ConfigInventory.INSTANCE.getLobbyPhaseItem());
         }
     }
