@@ -2,6 +2,7 @@ package de.hglabor.plugins.uhc.player;
 
 import de.hglabor.plugins.uhc.config.CKeys;
 import de.hglabor.plugins.uhc.config.UHCConfig;
+import de.hglabor.plugins.uhc.team.UHCTeam;
 import de.hglabor.utils.noriskutils.ChatUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,6 +21,8 @@ public class User implements UHCPlayer {
     private final AtomicInteger kills;
     private final AtomicInteger offlineTime;
     private boolean isTeleporting, inCombat;
+    private int teamIndex;
+    private UHCTeam uhcTeam;
     private UUID combatLogMob;
     private Location spawn;
     private UserStatus status;
@@ -32,6 +35,7 @@ public class User implements UHCPlayer {
         this.offlineTime = new AtomicInteger(UHCConfig.getInteger(CKeys.RELOG_TIME));
         this.uuid = uuid;
         this.name = name;
+        this.teamIndex = -1;
     }
 
     @Override
@@ -132,5 +136,25 @@ public class User implements UHCPlayer {
     @Override
     public void setSpawnLocation(Location location) {
         spawn = location;
+    }
+
+    @Override
+    public UHCTeam getTeam() {
+        return uhcTeam;
+    }
+
+    @Override
+    public void setTeam(UHCTeam team) {
+        this.uhcTeam = team;
+    }
+
+    @Override
+    public int getTeamIndex() {
+        return teamIndex;
+    }
+
+    @Override
+    public void setTeamIndex(int index) {
+        this.teamIndex = index;
     }
 }

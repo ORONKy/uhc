@@ -1,6 +1,7 @@
 package de.hglabor.plugins.uhc.team
 
 import de.hglabor.plugins.uhc.player.UHCPlayer
+import de.hglabor.plugins.uhc.player.User
 import de.hglabor.plugins.uhc.util.PlayerExtensions.sendMsg
 import net.axay.kspigot.runnables.task
 import net.kyori.adventure.text.Component
@@ -13,6 +14,8 @@ class UHCTeam(val leader: UHCPlayer) {
     val shouldFillTeam = true
     val backpack = Bukkit.createInventory(null, InventoryType.CHEST, Component.text("Backpack"))
     val teamKills = 0
+
+    fun User.isLeader(): Boolean = uuid.equals(leader.uuid)
 
     fun invite(uhcPlayer: UHCPlayer) {
         if (players.size >= Teams.maxTeamSize) {
@@ -41,6 +44,6 @@ class UHCTeam(val leader: UHCPlayer) {
 
     // this will be used to fill the teams
     fun forceJoin() {
-        
+
     }
 }

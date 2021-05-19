@@ -41,4 +41,8 @@ public interface UHCPlayer extends ScoreboardPlayer {
     UHCTeam getTeam();
 
     void setTeam(UHCTeam team);
+
+    int getTeamIndex();
+
+    void setTeamIndex(int index);
 }
