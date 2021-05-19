@@ -5,7 +5,6 @@ import de.hglabor.utils.noriskutils.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
@@ -22,8 +21,6 @@ public class GoldenHead implements Listener {
         this.itemStack = new ItemBuilder(Material.GOLDEN_APPLE)
                 .setName(ChatColor.GOLD + "Golden Head")
                 .hideItemFlags()
-                .hideEnchants()
-                .setEnchantment(Enchantment.LURE, 1)
                 .build();
     }
 
