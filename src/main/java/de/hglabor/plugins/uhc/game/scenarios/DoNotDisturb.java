@@ -33,7 +33,7 @@ public class DoNotDisturb extends Scenario {
                 if (threads.containsKey(player)) {
                     if (threads.get(player).getOpponent() != damager) {
                         event.setCancelled(true);
-                        damager.sendMessage(Localization.INSTANCE.getMessage("scenario.nocleanplus.playersTimeLeft",
+                        damager.sendMessage(Localization.INSTANCE.getMessage("scenario.donotdisturb.playersTimeLeft",
                                 ImmutableMap.of("numberInSeconds", String.valueOf(threads.get(player).getRemainingTime())),
                                 ChatUtils.locale(player)));
                     } else {
@@ -43,7 +43,7 @@ public class DoNotDisturb extends Scenario {
                 } else if (threads.containsKey(damager)) {
                     NoCleanPlusThread thread = threads.get(damager);
                     if (thread.getOpponent() != player) {
-                        damager.sendMessage(Localization.INSTANCE.getMessage("scenario.nocleanplus.alreadyFighting",
+                        damager.sendMessage(Localization.INSTANCE.getMessage("scenario.donotdisturb.alreadyFighting",
                                 ImmutableMap.of("opponent", threads.get(damager).getOpponent().getName()),
                                 ChatUtils.locale(player)));
                         event.setCancelled(true);
