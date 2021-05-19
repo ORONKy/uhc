@@ -7,6 +7,7 @@ import de.hglabor.plugins.uhc.config.UHCConfig;
 import de.hglabor.plugins.uhc.game.GameManager;
 import de.hglabor.plugins.uhc.game.GamePhase;
 import de.hglabor.plugins.uhc.game.PhaseType;
+import de.hglabor.plugins.uhc.game.Scenario;
 import de.hglabor.plugins.uhc.game.mechanics.PlayerScattering;
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
 import de.hglabor.plugins.uhc.game.scenarios.Teams;
@@ -28,6 +29,8 @@ import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
+
+import java.util.Set;
 
 public class ScatteringPhase extends GamePhase {
     private final World world;
@@ -56,6 +59,16 @@ public class ScatteringPhase extends GamePhase {
             Teams.INSTANCE.fillTeams();
         }
         playerScattering.runTaskTimer(Uhc.Companion.getINSTANCE(), 0, teleportDelay);
+
+        Bukkit.getScheduler().runTaskLater(Uhc.Companion.getINSTANCE(), () -> {
+            Set<Scenario> scenarios = GameManager.INSTANCE.getScenarios();
+            String strike = ChatColor.RESET.toString() + ChatColor.STRIKETHROUGH + "               ";
+            Bukkit.getOnlinePlayers().forEach(player -> {
+                player.sendMessage(strike + ChatColor.RESET + GlobalChat.hexColor("#EC2828") + "UHC" + strike);
+                player.sendMessage(ChatColor.DARK_RED + "Scenarios:");
+                scenarios.stream().filter(Scenario::isEnabled).map(scenario -> GlobalChat.hexColor("#F45959") + " - " + ChatColor.BLUE + scenario.getName()).forEach(player::sendMessage);
+            });
+        }, 5*20);
     }
 
     @Override

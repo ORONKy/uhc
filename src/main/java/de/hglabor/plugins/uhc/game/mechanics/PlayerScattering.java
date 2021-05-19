@@ -1,6 +1,8 @@
 package de.hglabor.plugins.uhc.game.mechanics;
 
+import de.hglabor.plugins.uhc.Uhc;
 import de.hglabor.plugins.uhc.game.GameManager;
+import de.hglabor.plugins.uhc.game.Scenario;
 import de.hglabor.plugins.uhc.game.mechanics.border.Corner;
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
 import de.hglabor.plugins.uhc.game.scenarios.Teams;
@@ -14,10 +16,12 @@ import org.bukkit.Location;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.boss.BossBar;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class PlayerScattering extends BukkitRunnable {
@@ -47,7 +51,9 @@ public class PlayerScattering extends BukkitRunnable {
     public void run() {
         if (toTeleport.isEmpty()) {
             loadBar.removeAll();
-            GameManager.INSTANCE.getPhase().startNextPhase();
+            Bukkit.getScheduler().runTaskLater(Uhc.Companion.getINSTANCE(), () -> {
+                GameManager.INSTANCE.getPhase().startNextPhase();
+            }, 60*20);
             cancel();
             return;
         }
@@ -64,6 +70,7 @@ public class PlayerScattering extends BukkitRunnable {
                 player.teleport(uhcPlayer.getSpawnLocation());
                 player.setGameMode(GameMode.SURVIVAL);
                 uhcPlayer.setStatus(UserStatus.INGAME);
+                player.removePotionEffect(PotionEffectType.BLINDNESS);
             });
             teleportedPlayers.add(uhcPlayer);
             counter++;
