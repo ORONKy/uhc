@@ -1,5 +1,6 @@
 package de.hglabor.plugins.uhc.player;
 
+import de.hglabor.plugins.uhc.team.UHCTeam;
 import de.hglabor.utils.noriskutils.scoreboard.ScoreboardPlayer;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -36,4 +37,8 @@ public interface UHCPlayer extends ScoreboardPlayer {
     Location getSpawnLocation();
 
     void setSpawnLocation(Location location);
+
+    UHCTeam getTeam();
+
+    void setTeam(UHCTeam team);
 }

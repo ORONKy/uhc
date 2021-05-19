@@ -35,4 +35,7 @@ public interface CKeys {
 
     String BROADCAST = "broadcast";
     String BROADCAST_NEW_TYPE = BROADCAST + "." + "newBroadcastInSeconds";
+
+    String TEAMS = "teams";
+    String TEAMS_SIZE = TEAMS + "." + "size";
 }
