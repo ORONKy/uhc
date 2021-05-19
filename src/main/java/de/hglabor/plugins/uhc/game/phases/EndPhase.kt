@@ -4,7 +4,10 @@ import de.hglabor.plugins.uhc.game.GameManager
 import de.hglabor.plugins.uhc.game.GamePhase
 import de.hglabor.plugins.uhc.game.PhaseType
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat
+import de.hglabor.plugins.uhc.game.scenarios.Teams
+import de.hglabor.plugins.uhc.game.scenarios.Teams.teamList
 import de.hglabor.plugins.uhc.player.PlayerList
+import de.hglabor.plugins.uhc.team.UHCTeam
 import net.axay.kspigot.chat.KColors
 import net.axay.kspigot.event.listen
 import net.axay.kspigot.extensions.broadcast
@@ -29,9 +32,22 @@ object EndPhase : GamePhase(120, PhaseType.END) {
     }
 
     override fun tick(timer: Int) {
-        val winner = PlayerList.INSTANCE.alivePlayers.first()
+        var winnerString = ""
+        if (Teams.isEnabled) {
+            winnerString += "${GlobalChat.getPrefix()}${KColors.GRAY}Die Gewinner sind: "
+            val winnerTeam = teamList.values.first { !it.isEliminated }
+            winnerTeam.players.iterator().forEach { player ->
+                winnerString += "${KColors.RED}${player.name}"
+                if (winnerTeam.players.last() != player) {
+                    winnerString += "§8, "
+                }
+            }
+        } else {
+            winnerString += "${GlobalChat.getPrefix()}${KColors.GRAY}Der Gewinner ist: ${KColors.RED}${PlayerList.INSTANCE.alivePlayers.first().name}"
+        }
+
         if (timer <= 5) {
-            broadcast("${GlobalChat.getPrefix()}${KColors.BOLD}${winner.name} won")
+            broadcast(winnerString)
         }
         if (timer > maxPhaseTime) {
             Bukkit.shutdown()
@@ -60,7 +76,7 @@ object EndPhase : GamePhase(120, PhaseType.END) {
         }
 
         listen<PlayerJoinEvent> {
-            it.player.kickPlayer("${ChatColor.RED}GAME ALREADY STARTED")
+            it.player.kickPlayer("${ChatColor.RED}GAME ALREADY ENDED")
         }
     }
 }

@@ -13,6 +13,7 @@ class UHCTeam(val leader: UHCPlayer, private val teamIndex: Int) {
     private val invitedPlayers = mutableListOf<UHCPlayer>()
     val shouldFillTeam = true
     val backpack = Bukkit.createInventory(null, InventoryType.CHEST, Component.text("Backpack"))
+    var isEliminated = false
     val teamKills: Int
         get() = players.sumBy { it.kills.get() }
 

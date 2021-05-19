@@ -96,6 +96,10 @@ public abstract class IngamePhase extends GamePhase {
             player.kickPlayer("Death");
         }
         event.setDeathMessage(null);
+
+        if (uhcPlayer.getTeam().getPlayers().stream().filter(UHCPlayer::isAlive).toArray().length == 0) {
+            uhcPlayer.getTeam().setEliminated(true);
+        }
     }
 
     @EventHandler
