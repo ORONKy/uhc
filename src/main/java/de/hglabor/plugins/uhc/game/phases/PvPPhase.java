@@ -8,11 +8,16 @@ import de.hglabor.plugins.uhc.game.mechanics.border.Border;
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
 import de.hglabor.plugins.uhc.game.scenarios.Timber;
 import de.hglabor.plugins.uhc.player.PlayerList;
+import de.hglabor.plugins.uhc.player.UHCPlayer;
 import de.hglabor.utils.noriskutils.TimeConverter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-public class PvPPhase extends IngamePhase {
+public class PvPPhase extends IngamePhase implements Listener {
     protected PvPPhase() {
         super(0, PhaseType.PVP);
     }
@@ -51,4 +56,13 @@ public class PvPPhase extends IngamePhase {
 
     @Override
     protected GamePhase getNextPhase() { return EndPhase.INSTANCE; }
+
+    @EventHandler
+    private void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+        if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
+            if (PlayerList.INSTANCE.getPlayer((Player) event.getEntity()) == PlayerList.INSTANCE.getPlayer((Player) event.getDamager())) {
+                event.setDamage(0.0);
+            }
+        }
+    }
 }
