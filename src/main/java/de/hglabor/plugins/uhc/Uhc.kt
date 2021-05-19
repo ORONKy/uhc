@@ -57,6 +57,7 @@ class Uhc : KSpigot() {
         gameManager.addScenario(DoubleOres.INSTANCE)
         gameManager.addScenario(DoubleHealth.INSTANCE)
         gameManager.addScenario(FlowerPower.INSTANCE)
+        gameManager.addScenario(Teams)
         gameManager.addScenario(Shieldless.INSTANCE)
         gameManager.addScenario(DoNotDisturb.INSTANCE)
         gameManager.addScenario(Potionless.INSTANCE)
@@ -93,7 +94,6 @@ class Uhc : KSpigot() {
         BorderCommand()
         HostCommand()
         TeamCommand
-        BackpackCommand
     }
 
     private fun registerListener() {

@@ -27,11 +27,9 @@ public class UHCConfig {
         plugin.getConfig().addDefault(CKeys.BORDER_FIRST_SHRINK, 45 * 60);
         plugin.getConfig().addDefault(CKeys.BORDER_SHRINK_INTERVAL, 60 * 5);
 
+        //PREGEN
         plugin.getConfig().addDefault(CKeys.RELOG_TIME, 120);
         plugin.getConfig().addDefault(CKeys.PREGEN_WORLD, true);
-
-        // TEAMS
-        plugin.getConfig().addDefault(CKeys.TEAMS_SIZE, 1);
 
         plugin.getConfig().addDefault(CKeys.SERVER_FOLDER_PATH, "/home/mcserver/uhc/");
 

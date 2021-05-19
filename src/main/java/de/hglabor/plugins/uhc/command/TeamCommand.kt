@@ -3,7 +3,7 @@ package de.hglabor.plugins.uhc.command
 import de.hglabor.plugins.uhc.game.GameManager
 import de.hglabor.plugins.uhc.game.PhaseType
 import de.hglabor.plugins.uhc.player.PlayerList
-import de.hglabor.plugins.uhc.team.Teams
+import de.hglabor.plugins.uhc.game.scenarios.Teams
 import de.hglabor.plugins.uhc.team.UHCTeam
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.PlayerArgument

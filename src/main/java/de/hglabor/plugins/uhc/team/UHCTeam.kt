@@ -1,5 +1,6 @@
 package de.hglabor.plugins.uhc.team
 
+import de.hglabor.plugins.uhc.game.scenarios.Teams
 import de.hglabor.plugins.uhc.player.UHCPlayer
 import net.axay.kspigot.chat.KColors
 import net.axay.kspigot.runnables.task

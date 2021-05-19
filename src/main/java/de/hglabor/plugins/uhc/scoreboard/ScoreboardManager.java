@@ -5,7 +5,7 @@ import de.hglabor.plugins.uhc.game.GamePhase;
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
 import de.hglabor.plugins.uhc.player.PlayerList;
 import de.hglabor.plugins.uhc.player.UHCPlayer;
-import de.hglabor.plugins.uhc.team.Teams;
+import de.hglabor.plugins.uhc.game.scenarios.Teams;
 import de.hglabor.utils.noriskutils.TimeConverter;
 import de.hglabor.utils.noriskutils.scoreboard.ScoreboardFactory;
 import de.hglabor.utils.noriskutils.scoreboard.ScoreboardPlayer;

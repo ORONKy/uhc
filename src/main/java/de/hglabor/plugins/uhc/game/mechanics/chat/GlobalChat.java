@@ -2,7 +2,7 @@ package de.hglabor.plugins.uhc.game.mechanics.chat;
 
 import de.hglabor.plugins.uhc.player.PlayerList;
 import de.hglabor.plugins.uhc.player.UHCPlayer;
-import de.hglabor.plugins.uhc.team.Teams;
+import de.hglabor.plugins.uhc.game.scenarios.Teams;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;

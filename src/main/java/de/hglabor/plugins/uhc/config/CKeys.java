@@ -30,9 +30,6 @@ public interface CKeys {
 
     String SCENARIOS = "scenarios";
 
-    String SERVER = "server";
-    String SERVER_FOLDER_PATH = SERVER + "." + "serverFolderPath";
-
     String BROADCAST = "broadcast";
     String BROADCAST_NEW_TYPE = BROADCAST + "." + "newBroadcastInSeconds";
 

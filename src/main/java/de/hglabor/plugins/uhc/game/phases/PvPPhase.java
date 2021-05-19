@@ -56,13 +56,4 @@ public class PvPPhase extends IngamePhase implements Listener {
 
     @Override
     protected GamePhase getNextPhase() { return EndPhase.INSTANCE; }
-
-    @EventHandler
-    private void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-        if (event.getEntity() instanceof Player && event.getDamager() instanceof Player) {
-            if (PlayerList.INSTANCE.getPlayer((Player) event.getEntity()) == PlayerList.INSTANCE.getPlayer((Player) event.getDamager())) {
-                event.setDamage(0.0);
-            }
-        }
-    }
 }
