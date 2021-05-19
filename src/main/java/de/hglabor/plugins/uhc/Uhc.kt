@@ -61,6 +61,7 @@ class Uhc : KSpigot() {
         gameManager.addScenario(DoNotDisturb.INSTANCE)
         gameManager.addScenario(Potionless.INSTANCE)
         gameManager.addScenario(OldKnockback.INSTANCE)
+        gameManager.addScenario(Backpack)
         gameManager.run()
         gameManager.enableScenarios()
 
@@ -92,6 +93,7 @@ class Uhc : KSpigot() {
         BorderCommand()
         HostCommand()
         TeamCommand
+        BackpackCommand
     }
 
     private fun registerListener() {
