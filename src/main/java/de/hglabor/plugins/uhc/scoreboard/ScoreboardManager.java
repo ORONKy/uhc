@@ -5,6 +5,7 @@ import de.hglabor.plugins.uhc.game.GamePhase;
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
 import de.hglabor.plugins.uhc.player.PlayerList;
 import de.hglabor.plugins.uhc.player.UHCPlayer;
+import de.hglabor.plugins.uhc.team.Teams;
 import de.hglabor.utils.noriskutils.TimeConverter;
 import de.hglabor.utils.noriskutils.scoreboard.ScoreboardFactory;
 import de.hglabor.utils.noriskutils.scoreboard.ScoreboardPlayer;
@@ -26,13 +27,18 @@ public final class ScoreboardManager implements Listener {
     }
 
     public static void setBasicScoreboardLayout(ScoreboardPlayer player) {
+        int score;
+        if (Teams.INSTANCE.getMaxTeamSize() > 1) score = 6; else score = 5;
         String placeHolder = ChatColor.GRAY.toString() + ChatColor.STRIKETHROUGH + "                   ";
-        ScoreboardFactory.addEntry(player, "placeHolder2", placeHolder, 5);
-        ScoreboardFactory.addEntry(player, "time", "Start: " + TimeConverter.stringify(180), 4);
-        ScoreboardFactory.addEntry(player, "players", "Players: " + Bukkit.getOnlinePlayers().size(), 3);
-        ScoreboardFactory.addEntry(player, "kills", "Kills: 0", 2);
-        ScoreboardFactory.addEntry(player, "border", "Border: " + GameManager.INSTANCE.getBorder().getBorderSize(), 1);
-        ScoreboardFactory.addEntry(player, "placeHolder1", placeHolder, 0);
+        ScoreboardFactory.addEntry(player, "placeHolder2", placeHolder, score--);
+        ScoreboardFactory.addEntry(player, "time", "Start: " + TimeConverter.stringify(180), score--);
+        ScoreboardFactory.addEntry(player, "players", "Players: " + Bukkit.getOnlinePlayers().size(), score--);
+        if (Teams.INSTANCE.getMaxTeamSize() > 1) {
+            ScoreboardFactory.addEntry(player, "teamKills", "Teamkills: 0", score--);
+        }
+        ScoreboardFactory.addEntry(player, "kills", "Kills: 0", score--);
+        ScoreboardFactory.addEntry(player, "border", "Border: " + GameManager.INSTANCE.getBorder().getBorderSize(), score--);
+        ScoreboardFactory.addEntry(player, "placeHolder1", placeHolder, score);
     }
 
     public static void updateForEveryone(int time) {
@@ -41,6 +47,9 @@ public final class ScoreboardManager implements Listener {
                 GamePhase phase = GameManager.INSTANCE.getPhase();
                 ScoreboardFactory.updateEntry(uhcPlayer, "time", phase.getTimeString(time));
                 ScoreboardFactory.updateEntry(uhcPlayer, "players", GlobalChat.hexColor("#EC2828") + "Players: " + GlobalChat.hexColor("#F45959") + phase.getAlivePlayers());
+                if (Teams.INSTANCE.getMaxTeamSize() > 1) {
+                    ScoreboardFactory.updateEntry(uhcPlayer, "teamKills", GlobalChat.hexColor("#EC2828") + "Teamkills: " + GlobalChat.hexColor("#F45959") + uhcPlayer.getTeam().getTeamKills());
+                }
                 ScoreboardFactory.updateEntry(uhcPlayer, "kills", GlobalChat.hexColor("#EC2828") + "Kills: " + GlobalChat.hexColor("#F45959") + uhcPlayer.getKills().get());
                 ScoreboardFactory.updateEntry(uhcPlayer, "border", GameManager.INSTANCE.getBorder().getBorderString(time));
             });
