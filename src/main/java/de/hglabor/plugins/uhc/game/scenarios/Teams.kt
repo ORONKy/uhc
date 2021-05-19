@@ -65,7 +65,15 @@ object Teams : Scenario("teams", ItemStack(Material.BELL)) {
 
     fun fillTeams() {
         PlayerList.INSTANCE.scatteringPlayers.filter { it.team == null }.forEach { uhcPlayer ->
-            teamList.values.first { it.players.size < maxTeamSize && it.shouldFill }.forceJoin(uhcPlayer)
+            val teams = teamList.values.filter { it.players.size < maxTeamSize && it.shouldFill }
+            if (teams.isNotEmpty()) {
+                teamList.values.first { it.players.size < maxTeamSize && it.shouldFill }.forceJoin(uhcPlayer)
+            } else {
+                val teamIndex = currentTeamIndex.incrementAndGet()
+                uhcPlayer.team = UHCTeam(uhcPlayer, teamIndex)
+                uhcPlayer.teamIndex = teamIndex
+                addTeam(teamIndex, uhcPlayer.team)
+            }
         }
     }
 }
