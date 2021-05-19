@@ -157,4 +157,9 @@ public class User implements UHCPlayer {
     public void setTeamIndex(int index) {
         this.teamIndex = index;
     }
+
+    @Override
+    public void sendMessage(String message) {
+        getBukkitPlayer().ifPresent(player -> player.sendMessage(message));
+    }
 }

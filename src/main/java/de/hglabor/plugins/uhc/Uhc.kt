@@ -42,7 +42,6 @@ class Uhc : KSpigot() {
         gameManager.addScenario(HasteyBoys.INSTANCE)
         gameManager.addScenario(Netherless.INSTANCE)
         gameManager.addScenario(RodKnockback.INSTANCE)
-        gameManager.addScenario(Teams.INSTANCE)
         gameManager.addScenario(AppleDrop.INSTANCE)
         gameManager.addScenario(Timebomb.INSTANCE)
         gameManager.addScenario(Soup.INSTANCE)
@@ -92,6 +91,7 @@ class Uhc : KSpigot() {
         PvPPhaseCommand()
         BorderCommand()
         HostCommand()
+        TeamCommand
     }
 
     private fun registerListener() {

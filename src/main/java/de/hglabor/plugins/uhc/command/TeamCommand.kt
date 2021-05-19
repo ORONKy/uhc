@@ -1,15 +1,11 @@
 package de.hglabor.plugins.uhc.command
 
-import com.sun.tools.javac.tree.TreeInfo.args
 import de.hglabor.plugins.uhc.game.GameManager
 import de.hglabor.plugins.uhc.game.PhaseType
-import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat
 import de.hglabor.plugins.uhc.player.PlayerList
 import de.hglabor.plugins.uhc.team.Teams
 import de.hglabor.plugins.uhc.team.UHCTeam
-import de.hglabor.plugins.uhc.util.PlayerExtensions.sendMsg
 import dev.jorel.commandapi.CommandAPICommand
-import dev.jorel.commandapi.arguments.GreedyStringArgument
 import dev.jorel.commandapi.arguments.PlayerArgument
 import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import net.axay.kspigot.chat.KColors
@@ -17,83 +13,72 @@ import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
 
 
-class TeamCommand {
+object TeamCommand {
     init {
-        val inviteArguments = listOf(GreedyStringArgument("invite"), PlayerArgument("player"))
-        CommandAPICommand("team")
-                .withRequirement { commandSender: CommandSender -> commandSender is Player }
-                .withRequirement { Teams.maxTeamSize > 1 }
-                .withRequirement { GameManager.INSTANCE.phaseType == PhaseType.LOBBY }
-                .withArguments(inviteArguments)
-                .executesPlayer(PlayerCommandExecutor { player, args ->
-                    val uhcPlayer = PlayerList.INSTANCE.getPlayer(player)
-                    val invitedPlayer = args[1] as Player
-                    if (uhcPlayer.team != null && uhcPlayer.team.leader == uhcPlayer) {
-                        uhcPlayer.team.invite(PlayerList.INSTANCE.getPlayer(invitedPlayer))
-                    } else {
-
-                    }
-                }).register()
-        val joinArguments = listOf(GreedyStringArgument("join"), PlayerArgument("player"))
-        CommandAPICommand("team")
-                .withRequirement { commandSender: CommandSender -> commandSender is Player }
-                .withRequirement { Teams.maxTeamSize > 1 }
-                .withRequirement { GameManager.INSTANCE.phaseType == PhaseType.LOBBY }
-                .withArguments(joinArguments)
-                .executesPlayer(PlayerCommandExecutor { player, args ->
-                    val playerToJoin = PlayerList.INSTANCE.getPlayer(player)
-                    val teamLeader = args[1] as Player
-                    val uhcTeamLeader = PlayerList.INSTANCE.getPlayer(teamLeader)
-                    val teamToJoin = uhcTeamLeader.team
-
-                    if (teamToJoin != null) {
-
-                        if (teamToJoin.invitedPlayers.contains(playerToJoin)) {
-                            teamToJoin.players.add(playerToJoin)
-                            teamToJoin.invitedPlayers.remove(playerToJoin)
+        //TEAM INVITE
+        CommandAPICommand("uhcteam")
+            .withRequirement { commandSender: CommandSender -> commandSender is Player }
+            .withRequirement { Teams.isEnabled() }
+            .withRequirement { GameManager.INSTANCE.phaseType == PhaseType.LOBBY }
+            .withSubcommand(
+                CommandAPICommand("join")
+                    .withArguments(PlayerArgument("player"))
+                    .executesPlayer(PlayerCommandExecutor { player, args ->
+                        if (PlayerList.INSTANCE.getPlayer(player).teamIndex != -1) {
+                            return@PlayerCommandExecutor
                         }
-
-
-                    }
-
-                }).register()
-        CommandAPICommand("team")
-                .withRequirement { commandSender: CommandSender -> commandSender is Player }
-                .withRequirement { Teams.maxTeamSize > 1 }
-                .withRequirement { GameManager.INSTANCE.phaseType == PhaseType.LOBBY }
-                .withArguments(GreedyStringArgument("create"))
-                .executesPlayer(PlayerCommandExecutor { player, _ ->
-                    val leader = PlayerList.INSTANCE.getPlayer(player)
-                    leader.team = UHCTeam(leader)
-                    leader.teamIndex = Teams.currentTeamIndex.get()
-                    Teams.addTeam(Teams.currentTeamIndex.get(), leader.team)
-                    player.sendMessage("${KColors.GREENYELLOW}Du hast erfolgreich das Team Nummer [${Teams.currentTeamIndex.get()}] erstellt")
-                }).register()
-        CommandAPICommand("team")
-                .withRequirement { commandSender: CommandSender -> commandSender is Player }
-                .withRequirement { Teams.maxTeamSize > 1 }
-                .withRequirement { PlayerList.INSTANCE.getPlayer(it as Player).team != null }
-                .withRequirement { GameManager.INSTANCE.phaseType == PhaseType.LOBBY }
-                .withArguments(GreedyStringArgument("leave"))
-                .executesPlayer(PlayerCommandExecutor { it, _ ->
-                    val player = PlayerList.INSTANCE.getPlayer(it)
-                    val team = player.team
-                    if (team.leader.uuid.equals(player.uuid)) {
-                        team.players.forEach {
-                            it.teamIndex = -1
-                            it.team = null
-                            it.bukkitPlayer.ifPresent { player -> player.sendMessage("${KColors.ORANGERED}Das Team wurde aufgelöst.") }
+                        val uhcTeamLeader = PlayerList.INSTANCE.getPlayer(args[0] as Player)
+                        val teamToJoin = uhcTeamLeader.team
+                        teamToJoin.join(PlayerList.INSTANCE.getPlayer(player))
+                    })
+            )
+            .withSubcommand(
+                CommandAPICommand("invite")
+                    .withArguments(PlayerArgument("player"))
+                    .executesPlayer(PlayerCommandExecutor { player, args ->
+                        if (PlayerList.INSTANCE.getPlayer(player).teamIndex == -1) {
+                            return@PlayerCommandExecutor
                         }
-                    } else {
-                        team.players.remove(player)
-                        team.players.forEach {
-                            it.bukkitPlayer.ifPresent { player ->
-                                player.sendMessage("${KColors.ALICEBLUE}${it.player.name} hat das Team verlassen.")
-                            }
+                        val uhcPlayer = PlayerList.INSTANCE.getPlayer(player)
+                        if (uhcPlayer.team.leader == uhcPlayer) {
+                            uhcPlayer.team.invite(PlayerList.INSTANCE.getPlayer(args[0] as Player))
+                        } else {
+                            player.sendMessage("${KColors.RED}Du bist kein Team Leader.")
+                            player.sendMessage("${KColors.RED}Erstelle ein eigenes Team mit /UHCTeam create.")
                         }
-                        it.sendMessage("${KColors.ALICEBLUE}Du hast das Team verlassen.")
-                    }
-                }).register()
+                    })
+            )
+            .withSubcommand(
+                CommandAPICommand("create")
+                    .executesPlayer(PlayerCommandExecutor { player, _ ->
+                        if (PlayerList.INSTANCE.getPlayer(player).teamIndex == 1 || PlayerList.INSTANCE.getPlayer(player).team != null) {
+                            return@PlayerCommandExecutor
+                        }
+                        val leader = PlayerList.INSTANCE.getPlayer(player)
+                        val teamIndex = Teams.currentTeamIndex.incrementAndGet()
+                        leader.team = UHCTeam(leader, teamIndex)
+                        leader.teamIndex = teamIndex
+                        Teams.addTeam(teamIndex, leader.team)
+                        player.sendMessage("${KColors.GREENYELLOW}Du hast erfolgreich das Team Nummer [${teamIndex}] erstellt")
+                    })
+            )
+            .withSubcommand(
+                CommandAPICommand("leave")
+                    .executesPlayer(PlayerCommandExecutor { it, _ ->
+                        if (PlayerList.INSTANCE.getPlayer(it).teamIndex == -1) {
+                            return@PlayerCommandExecutor
+                        }
+                        val player = PlayerList.INSTANCE.getPlayer(it)
+                        val team = player.team
+                        team.leave(player)
+                    })
+            )
+            .withSubcommand(
+                CommandAPICommand("haha")
+                    .executesPlayer(PlayerCommandExecutor { it, _ ->
+                        it.sendMessage("${KColors.MEDIUMVIOLETRED}Wieso führst du diesen Command aus?")
+                    })
+            ).register()
     }
 }
 

@@ -1,5 +1,8 @@
 package de.hglabor.plugins.uhc.game.mechanics.chat;
 
+import de.hglabor.plugins.uhc.player.PlayerList;
+import de.hglabor.plugins.uhc.player.UHCPlayer;
+import de.hglabor.plugins.uhc.team.Teams;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -49,10 +52,15 @@ public class GlobalChat implements Listener {
 
     @EventHandler
     private void onAsyncPlayerChat(AsyncPlayerChatEvent event) {
-        event.setFormat(chatFormat);
-
         Player player = event.getPlayer();
-        if (isEnabled) return;
+        UHCPlayer uhcPlayer = PlayerList.INSTANCE.getPlayer(player);
+        int teamIndex = uhcPlayer.getTeamIndex();
+
+        event.setFormat((Teams.INSTANCE.isEnabled() && teamIndex != -1 ? "Team[" + teamIndex + "] " : "") + chatFormat);
+
+        if (isEnabled) {
+            return;
+        }
         event.setCancelled(!player.hasPermission("group.mod") && !player.isOp());
     }
 

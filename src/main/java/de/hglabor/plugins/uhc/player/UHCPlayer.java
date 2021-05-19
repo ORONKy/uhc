@@ -16,6 +16,8 @@ public interface UHCPlayer extends ScoreboardPlayer {
 
     UserStatus getStatus();
 
+    void setStatus(UserStatus status);
+
     String getName();
 
     UUID getCombatLogMob();
@@ -30,8 +32,6 @@ public interface UHCPlayer extends ScoreboardPlayer {
 
     AtomicInteger getKills();
 
-    void setStatus(UserStatus status);
-
     Optional<Player> getBukkitPlayer();
 
     Location getSpawnLocation();
@@ -45,4 +45,6 @@ public interface UHCPlayer extends ScoreboardPlayer {
     int getTeamIndex();
 
     void setTeamIndex(int index);
+
+    void sendMessage(String message);
 }
