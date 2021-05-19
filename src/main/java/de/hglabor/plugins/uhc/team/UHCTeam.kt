@@ -13,7 +13,8 @@ class UHCTeam(val leader: UHCPlayer, private val teamIndex: Int) {
     private val invitedPlayers = mutableListOf<UHCPlayer>()
     val shouldFillTeam = true
     val backpack = Bukkit.createInventory(null, InventoryType.CHEST, Component.text("Backpack"))
-    val teamKills = 0
+    val teamKills: Int
+        get() = players.sumBy { it.kills.get() }
 
     /**
      * invites player but invitation will be exipired
@@ -57,7 +58,16 @@ class UHCTeam(val leader: UHCPlayer, private val teamIndex: Int) {
         if (invitedPlayers.contains(uhcPlayer)) {
             //No Team
             if (uhcPlayer.team == null) {
+
+                //TEAM FULL
+                if (players.size >= Teams.maxTeamSize) {
+                    leader.sendMessage("${KColors.RED}${uhcPlayer.name} konnte nicht joinen weil das Team voll ist.")
+                    uhcPlayer.sendMessage("${KColors.RED}Das Team von ${leader.name} ist bereits voll.")
+                    return
+                }
+
                 uhcPlayer.team = this;
+                uhcPlayer.teamIndex = teamIndex
                 invitedPlayers.remove(uhcPlayer)
                 players.forEach { it.sendMessage("${KColors.GREEN}${uhcPlayer.name} ist dem Team beigetreten.") }
                 players.add(uhcPlayer)
@@ -80,6 +90,8 @@ class UHCTeam(val leader: UHCPlayer, private val teamIndex: Int) {
             close()
         } else {
             if (players.remove(uhcPlayer)) {
+                uhcPlayer.team = null
+                uhcPlayer.teamIndex = -1
                 uhcPlayer.sendMessage("${KColors.GREEN}Du hast das Team erfolgreich verlassen.")
                 players.forEach {
                     it.sendMessage("${KColors.RED}${uhcPlayer.name} hat das Team verlassen.")

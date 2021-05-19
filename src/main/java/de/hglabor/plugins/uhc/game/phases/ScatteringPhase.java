@@ -12,7 +12,6 @@ import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
 import de.hglabor.plugins.uhc.player.PlayerList;
 import de.hglabor.plugins.uhc.player.UHCPlayer;
 import de.hglabor.plugins.uhc.player.UserStatus;
-import de.hglabor.plugins.uhc.game.scenarios.Teams;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -48,14 +47,11 @@ public class ScatteringPhase extends GamePhase {
             uhcPlayer.getBukkitPlayer().ifPresent(player -> player.addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, Integer.MAX_VALUE, 2)));
         });
         maxPlayers = playerList.getScatteringPlayers().size();
-        if (Teams.INSTANCE.isEnabled()) {
 
-        } else {
-            int amountToTeleport = UHCConfig.getInteger(CKeys.SCATTER_AMOUNT_TO_TELEPORT_EACH_TIME);
-            int teleportDelay = UHCConfig.getInteger(CKeys.SCATTER_TELEPORT_DELAY);
-            PlayerScattering playerScattering = new PlayerScattering(playerList.getScatteringPlayers(), amountToTeleport);
-            playerScattering.runTaskTimer(Uhc.Companion.getINSTANCE(), 0, teleportDelay);
-        }
+        int amountToTeleport = UHCConfig.getInteger(CKeys.SCATTER_AMOUNT_TO_TELEPORT_EACH_TIME);
+        int teleportDelay = UHCConfig.getInteger(CKeys.SCATTER_TELEPORT_DELAY);
+        PlayerScattering playerScattering = new PlayerScattering(playerList.getScatteringPlayers(), amountToTeleport);
+        playerScattering.runTaskTimer(Uhc.Companion.getINSTANCE(), 0, teleportDelay);
     }
 
     @Override

@@ -1,10 +1,8 @@
 package de.hglabor.plugins.uhc.game;
 
 import de.hglabor.plugins.uhc.Uhc;
-import de.hglabor.plugins.uhc.config.CKeys;
 import de.hglabor.plugins.uhc.game.mechanics.border.Border;
 import de.hglabor.plugins.uhc.game.phases.LobbyPhase;
-import de.hglabor.plugins.uhc.config.UHCConfig;
 import de.hglabor.plugins.uhc.scoreboard.ScoreboardManager;
 import org.bukkit.Bukkit;
 
@@ -37,9 +35,7 @@ public final class GameManager {
     }
 
     public void enableScenarios() {
-        for (Scenario scenario : scenarios) {
-            scenario.setEnabled(UHCConfig.getBoolean(CKeys.SCENARIOS + "." + scenario.getName() + "." + "enabled"));
-        }
+        scenarios.forEach(Scenario::loadConfig);
     }
 
     public void registerScenarioEvents() {

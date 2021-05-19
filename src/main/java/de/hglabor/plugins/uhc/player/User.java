@@ -11,6 +11,7 @@ import org.bukkit.scoreboard.Objective;
 import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -161,5 +162,18 @@ public class User implements UHCPlayer {
     @Override
     public void sendMessage(String message) {
         getBukkitPlayer().ifPresent(player -> player.sendMessage(message));
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return uuid.equals(user.uuid) && name.equals(user.name);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(uuid, name);
     }
 }

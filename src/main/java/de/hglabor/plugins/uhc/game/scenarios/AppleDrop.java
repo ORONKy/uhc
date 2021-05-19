@@ -31,6 +31,7 @@ public class AppleDrop extends Scenario {
 
     @Override
     protected void loadConfig() {
+        super.loadConfig();
         dropRate = UHCConfig.getInteger(CKeys.SCENARIOS + "." + getName() + "." + "dropRate");
     }
 

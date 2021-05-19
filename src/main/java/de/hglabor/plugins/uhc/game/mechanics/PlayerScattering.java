@@ -3,6 +3,7 @@ package de.hglabor.plugins.uhc.game.mechanics;
 import de.hglabor.plugins.uhc.game.GameManager;
 import de.hglabor.plugins.uhc.game.mechanics.border.Corner;
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
+import de.hglabor.plugins.uhc.game.scenarios.Teams;
 import de.hglabor.plugins.uhc.player.UHCPlayer;
 import de.hglabor.plugins.uhc.player.UserStatus;
 import de.hglabor.plugins.uhc.util.SpawnUtils;
@@ -58,7 +59,7 @@ public class PlayerScattering extends BukkitRunnable {
             if (counter >= amountToTeleportEachRun) {
                 break;
             }
-            uhcPlayer.setSpawnLocation(getSpawnLocation());
+            uhcPlayer.setSpawnLocation(getSpawnLocation(uhcPlayer));
             uhcPlayer.getBukkitPlayer().ifPresent(player -> {
                 player.teleport(uhcPlayer.getSpawnLocation());
                 player.setGameMode(GameMode.SURVIVAL);
@@ -73,7 +74,15 @@ public class PlayerScattering extends BukkitRunnable {
         loadBar.setProgress((double) playerCounter.get() / playerAmount);
     }
 
-    private Location getSpawnLocation() {
+    private Location getSpawnLocation(UHCPlayer uhcPlayer) {
+        if (Teams.INSTANCE.isEnabled() && uhcPlayer.getTeam() != null) {
+            for (UHCPlayer teamMember : uhcPlayer.getTeam().getPlayers()) {
+                if (teamMember.getSpawnLocation() != null) {
+                    return teamMember.getSpawnLocation();
+                }
+            }
+        }
+
         if (cornerCounter.get() > 4) cornerCounter.set(1);
         return SpawnUtils.getCornerSpawn(Corner.getCorner(cornerCounter.getAndIncrement()), GameManager.INSTANCE.getBorder().getBorderSize());
     }

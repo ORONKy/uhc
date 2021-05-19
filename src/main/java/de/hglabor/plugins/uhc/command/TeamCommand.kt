@@ -2,8 +2,8 @@ package de.hglabor.plugins.uhc.command
 
 import de.hglabor.plugins.uhc.game.GameManager
 import de.hglabor.plugins.uhc.game.PhaseType
-import de.hglabor.plugins.uhc.player.PlayerList
 import de.hglabor.plugins.uhc.game.scenarios.Teams
+import de.hglabor.plugins.uhc.player.PlayerList
 import de.hglabor.plugins.uhc.team.UHCTeam
 import dev.jorel.commandapi.CommandAPICommand
 import dev.jorel.commandapi.arguments.PlayerArgument
@@ -18,7 +18,7 @@ object TeamCommand {
         //TEAM INVITE
         CommandAPICommand("uhcteam")
             .withRequirement { commandSender: CommandSender -> commandSender is Player }
-            .withRequirement { Teams.isEnabled() }
+            .withRequirement { Teams.isEnabled }
             .withRequirement { GameManager.INSTANCE.phaseType == PhaseType.LOBBY }
             .withSubcommand(
                 CommandAPICommand("join")
@@ -74,11 +74,24 @@ object TeamCommand {
                     })
             )
             .withSubcommand(
+                CommandAPICommand("list")
+                    .withArguments(PlayerArgument("leader"))
+                    .executesPlayer(PlayerCommandExecutor { it, args ->
+                        val player = PlayerList.INSTANCE.getPlayer(args[0] as Player)
+                        val team = player.team
+                        player.sendMessage("Team of ${team.leader.name}")
+                        team.players.forEach { teamMember ->
+                            it.sendMessage(" - ${teamMember.name} | Health: ${teamMember.player.health.toInt()}")
+                        }
+                    })
+            )
+            .withSubcommand(
                 CommandAPICommand("haha")
                     .executesPlayer(PlayerCommandExecutor { it, _ ->
                         it.sendMessage("${KColors.MEDIUMVIOLETRED}Wieso führst du diesen Command aus?")
                     })
             ).register()
     }
+
 }
 
