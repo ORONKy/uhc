@@ -94,6 +94,7 @@ class Uhc : KSpigot() {
         BorderCommand()
         HostCommand()
         TeamCommand
+        SendCoordsCommand
     }
 
     private fun registerListener() {
