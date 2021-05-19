@@ -53,6 +53,7 @@ object ConfigInventory {
                         val text = if (scenario.isEnabled) "${KColors.LIME}enabled" else "${KColors.RED}disabled"
                         clickEvent.player.sendMessage("${KColors.DODGERBLUE}${scenario.name} ${KColors.WHITE}is now ${KColors.RED}$text")
                     })
+                compound.sortContentBy { it.name }
                 setScrollableCompoundLayout(compound)
                 compound.setContent(GameManager.INSTANCE.scenarios)
             }
