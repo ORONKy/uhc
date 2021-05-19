@@ -6,9 +6,11 @@ import de.hglabor.plugins.uhc.game.PhaseType;
 import de.hglabor.plugins.uhc.game.Scenario;
 import de.hglabor.plugins.uhc.game.mechanics.border.Border;
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
+import de.hglabor.plugins.uhc.game.scenarios.Teams;
 import de.hglabor.plugins.uhc.game.scenarios.Timber;
 import de.hglabor.plugins.uhc.player.PlayerList;
 import de.hglabor.plugins.uhc.player.UHCPlayer;
+import de.hglabor.plugins.uhc.team.UHCTeam;
 import de.hglabor.utils.noriskutils.TimeConverter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -31,8 +33,15 @@ public class PvPPhase extends IngamePhase implements Listener {
     @Override
     protected void tick(int timer) {
         Border border = GameManager.INSTANCE.getBorder();
-        if (PlayerList.INSTANCE.getAlivePlayers().size() == 1) {
-            startNextPhase();
+        if (Teams.INSTANCE.isEnabled()) {
+            UHCTeam[] existingTeams = (UHCTeam[]) Teams.INSTANCE.getTeamList().values().stream().filter(UHCTeam::isEliminated).toArray();
+            if (existingTeams.length == 1) {
+                startNextPhase();
+            }
+        } else {
+            if (PlayerList.INSTANCE.getAlivePlayers().size() == 1) {
+                startNextPhase();
+            }
         }
         border.announceBorderShrink(timer);
         Bukkit.getOnlinePlayers().forEach(player -> {

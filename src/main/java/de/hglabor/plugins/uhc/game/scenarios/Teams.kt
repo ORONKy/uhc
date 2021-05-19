@@ -20,7 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger
 
 object Teams : Scenario("teams", ItemStack(Material.BELL)) {
     var maxTeamSize: Int = 1
-    private val teamList = mutableMapOf<Int, UHCTeam>()
+    val teamList = mutableMapOf<Int, UHCTeam>()
     val createTeamItem = itemStack(Material.CYAN_BANNER) { meta { name = "${KColors.DODGERBLUE}Create Team" } }
     var currentTeamIndex = AtomicInteger()
 
