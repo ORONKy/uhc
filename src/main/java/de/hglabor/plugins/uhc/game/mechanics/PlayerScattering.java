@@ -9,6 +9,7 @@ import de.hglabor.plugins.uhc.game.scenarios.Teams;
 import de.hglabor.plugins.uhc.player.UHCPlayer;
 import de.hglabor.plugins.uhc.player.UserStatus;
 import de.hglabor.plugins.uhc.util.SpawnUtils;
+import de.hglabor.utils.noriskutils.TimeConverter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -51,9 +52,20 @@ public class PlayerScattering extends BukkitRunnable {
     public void run() {
         if (toTeleport.isEmpty()) {
             loadBar.removeAll();
+            //TODO 60 sekunden als config adden und dann neue runnable klasse die nachrichten anzeigt + wann es startet
+            Bukkit.getScheduler().runTaskLater(Uhc.Companion.getINSTANCE(), () -> {
+                Set<Scenario> scenarios = GameManager.INSTANCE.getScenarios();
+                String strike = ChatColor.RESET.toString() + ChatColor.STRIKETHROUGH + "               ";
+                Bukkit.getOnlinePlayers().forEach(player -> {
+                    player.sendTitle("", "Game starts in " + TimeConverter.stringify(60),20,60,20);
+                    player.sendMessage(strike + ChatColor.RESET + GlobalChat.hexColor("#EC2828") + "UHC" + strike);
+                    player.sendMessage(ChatColor.DARK_RED + "Scenarios:");
+                    scenarios.stream().filter(Scenario::isEnabled).map(scenario -> GlobalChat.hexColor("#F45959") + " - " + ChatColor.BLUE + scenario.getName()).forEach(player::sendMessage);
+                });
+            }, 5 * 20);
             Bukkit.getScheduler().runTaskLater(Uhc.Companion.getINSTANCE(), () -> {
                 GameManager.INSTANCE.getPhase().startNextPhase();
-            }, 60*20);
+            }, 60 * 20);
             cancel();
             return;
         }
