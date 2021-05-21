@@ -1,6 +1,7 @@
 package de.hglabor.plugins.uhc.game.phases;
 
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
+import de.hglabor.plugins.uhc.Uhc;
 import de.hglabor.plugins.uhc.config.CKeys;
 import de.hglabor.plugins.uhc.config.UHCConfig;
 import de.hglabor.plugins.uhc.game.GameManager;

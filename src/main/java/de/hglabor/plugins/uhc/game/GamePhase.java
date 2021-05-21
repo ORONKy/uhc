@@ -1,5 +1,6 @@
 package de.hglabor.plugins.uhc.game;
 
+import de.hglabor.plugins.uhc.Uhc;
 import de.hglabor.plugins.uhc.player.PlayerList;
 import de.hglabor.plugins.uhc.player.UHCPlayer;
 import org.bukkit.Bukkit;

@@ -1,5 +1,6 @@
 package de.hglabor.plugins.uhc.game.mechanics;
 
+import de.hglabor.plugins.uhc.Uhc;
 import de.hglabor.utils.noriskutils.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;

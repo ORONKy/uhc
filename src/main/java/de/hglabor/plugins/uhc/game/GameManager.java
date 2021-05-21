@@ -1,5 +1,6 @@
 package de.hglabor.plugins.uhc.game;
 
+import de.hglabor.plugins.uhc.Uhc;
 import de.hglabor.plugins.uhc.game.mechanics.border.Border;
 import de.hglabor.plugins.uhc.game.phases.LobbyPhase;
 import de.hglabor.plugins.uhc.scoreboard.ScoreboardManager;

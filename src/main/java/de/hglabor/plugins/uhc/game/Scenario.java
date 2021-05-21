@@ -1,5 +1,6 @@
 package de.hglabor.plugins.uhc.game;
 
+import de.hglabor.plugins.uhc.Uhc;
 import de.hglabor.plugins.uhc.config.CKeys;
 import de.hglabor.plugins.uhc.config.UHCConfig;
 import org.bukkit.event.Listener;
