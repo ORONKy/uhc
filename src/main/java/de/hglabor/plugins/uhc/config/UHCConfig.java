@@ -1,6 +1,5 @@
 package de.hglabor.plugins.uhc.config;
 
-import de.hglabor.plugins.uhc.Uhc;
 import org.bukkit.GameRule;
 import org.bukkit.World;
 

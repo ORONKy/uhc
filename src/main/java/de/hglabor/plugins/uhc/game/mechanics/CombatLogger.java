@@ -1,6 +1,5 @@
 package de.hglabor.plugins.uhc.game.mechanics;
 
-import de.hglabor.plugins.uhc.Uhc;
 import de.hglabor.plugins.uhc.game.mechanics.events.PlayerKilledPlayerEvent;
 import de.hglabor.plugins.uhc.player.PlayerList;
 import de.hglabor.plugins.uhc.player.UHCPlayer;

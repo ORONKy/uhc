@@ -1,6 +1,5 @@
 package de.hglabor.plugins.uhc.game.scenarios;
 
-import de.hglabor.plugins.uhc.Uhc;
 import de.hglabor.plugins.uhc.game.Scenario;
 import de.hglabor.plugins.uhc.game.mechanics.GoldenHead;
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
