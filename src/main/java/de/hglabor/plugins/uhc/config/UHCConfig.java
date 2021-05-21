@@ -50,6 +50,7 @@ public class UHCConfig {
         world.setGameRule(GameRule.SHOW_DEATH_MESSAGES, false);
         world.setGameRule(GameRule.COMMAND_BLOCK_OUTPUT, false);
         world.setGameRule(GameRule.LOG_ADMIN_COMMANDS, false);
+        world.setGameRule(GameRule.SPECTATORS_GENERATE_CHUNKS, false);
     }
 
     public static void setLobbySettings(World world) {
@@ -68,6 +69,7 @@ public class UHCConfig {
         world.setGameRule(GameRule.DO_TILE_DROPS, false);
         world.setGameRule(GameRule.COMMAND_BLOCK_OUTPUT, false);
         world.setGameRule(GameRule.LOG_ADMIN_COMMANDS, false);
+        world.setGameRule(GameRule.SPECTATORS_GENERATE_CHUNKS, false);
     }
 
     public static int getInteger(String key) {
