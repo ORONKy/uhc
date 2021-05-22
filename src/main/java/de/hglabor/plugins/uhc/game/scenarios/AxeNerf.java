@@ -49,9 +49,7 @@ public class AxeNerf extends Scenario {
         }
         Player player = (Player) event.getDamager();
         if (axes.contains(player.getInventory().getItemInMainHand().getType())) {
-            Bukkit.broadcastMessage("Eigentlicher schaden:" + event.getDamage());
             event.setDamage(event.getDamage() * multiplier);
-            Bukkit.broadcastMessage("Mit nerf (" + multiplier + ")" + event.getDamage());
         }
     }
 }

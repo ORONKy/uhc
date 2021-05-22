@@ -65,6 +65,7 @@ class Uhc : KSpigot() {
         gameManager.addScenario(Backpack)
         gameManager.addScenario(GappleRoulette)
         gameManager.addScenario(Goldless)
+        gameManager.addScenario(AxeNerf.INSTANCE)
         gameManager.addScenario(HealthAcceleration)
         gameManager.addScenario(Kings)
         gameManager.addScenario(NoFall)
