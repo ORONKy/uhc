@@ -1,5 +1,6 @@
 package de.hglabor.plugins.uhc.game.mechanics;
 
+import de.hglabor.plugins.uhc.Uhc;
 import de.hglabor.plugins.uhc.game.GameManager;
 import de.hglabor.plugins.uhc.game.Scenario;
 import de.hglabor.plugins.uhc.game.mechanics.border.Corner;

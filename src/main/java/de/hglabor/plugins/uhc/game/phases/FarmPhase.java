@@ -1,5 +1,6 @@
 package de.hglabor.plugins.uhc.game.phases;
 
+import de.hglabor.plugins.uhc.Uhc;
 import de.hglabor.plugins.uhc.config.CKeys;
 import de.hglabor.plugins.uhc.config.UHCConfig;
 import de.hglabor.plugins.uhc.game.GameManager;
