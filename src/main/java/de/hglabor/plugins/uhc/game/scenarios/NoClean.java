@@ -1,6 +1,7 @@
 package de.hglabor.plugins.uhc.game.scenarios;
 
 import com.google.common.collect.ImmutableMap;
+import de.hglabor.plugins.uhc.Uhc;
 import de.hglabor.plugins.uhc.game.Scenario;
 import de.hglabor.utils.localization.Localization;
 import de.hglabor.utils.noriskutils.ChatUtils;

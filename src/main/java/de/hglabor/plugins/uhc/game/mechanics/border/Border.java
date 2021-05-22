@@ -5,6 +5,7 @@ import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.CuboidRegion;
+import de.hglabor.plugins.uhc.Uhc;
 import de.hglabor.plugins.uhc.config.CKeys;
 import de.hglabor.plugins.uhc.config.UHCConfig;
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
