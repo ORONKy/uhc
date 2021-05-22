@@ -1,6 +1,7 @@
 package de.hglabor.plugins.uhc.game.phases;
 
 import com.destroystokyo.paper.event.player.PlayerJumpEvent;
+import de.hglabor.plugins.uhc.Uhc;
 import de.hglabor.plugins.uhc.config.CKeys;
 import de.hglabor.plugins.uhc.config.UHCConfig;
 import de.hglabor.plugins.uhc.game.GameManager;
@@ -54,6 +55,10 @@ public class ScatteringPhase extends GamePhase {
         if (Teams.INSTANCE.isEnabled()) {
             Teams.INSTANCE.fillTeams();
         }
+        playerList.getLobbyPlayers().forEach(uhcPlayer -> {
+            uhcPlayer.setStatus(UserStatus.SCATTERING);
+            uhcPlayer.getBukkitPlayer().ifPresent(player -> player.getInventory().clear());
+        });
         playerScattering.runTaskTimer(Uhc.Companion.getINSTANCE(), 0, teleportDelay);
     }
 
