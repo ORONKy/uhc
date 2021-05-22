@@ -8,12 +8,11 @@ import de.hglabor.utils.noriskutils.ItemBuilder
 import net.axay.kspigot.chat.KColors
 import net.axay.kspigot.gui.*
 import net.axay.kspigot.gui.elements.GUIRectSpaceCompound
-import net.axay.kspigot.items.itemStack
-import net.axay.kspigot.items.meta
-import net.axay.kspigot.items.name
+import net.axay.kspigot.items.*
 import org.bukkit.Material
 import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
+import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 import java.lang.reflect.Field
@@ -37,21 +36,34 @@ object ConfigInventory {
             page(2) {
                 val compound = createRectCompound<Scenario>(Slots.RowTwoSlotTwo, Slots.RowFourSlotEight,
                     iconGenerator = { scenario ->
-                        ItemBuilder(scenario.displayItem).setName("${KColors.DODGERBLUE}${scenario.name}")
-                            .hideItemFlags().hideEnchants().build()
+                        itemStack(scenario.displayItem.type) {
+                            amount = scenario.displayItem.amount
+                            meta {
+                                name = if (scenario.isEnabled) "${KColors.GREEN}${scenario.name}" else "${KColors.RED}${scenario.name}"
+                                flag(ItemFlag.HIDE_ENCHANTS)
+                                flag(ItemFlag.HIDE_ATTRIBUTES)
+                                flag(ItemFlag.HIDE_POTION_EFFECTS)
+                                if (scenario.isEnabled) {
+                                    addEnchant(Enchantment.LUCK, 1, true)
+                                }
+                            }
+                        }
                     }, onClick = { clickEvent, scenario ->
                         clickEvent.bukkitEvent.isCancelled = true
                         scenario.displayItem.meta {
                             if (scenario.isEnabled) {
                                 removeEnchant(Enchantment.LUCK)
                             } else {
-                                addEnchant(Enchantment.LUCK, 1, true)
+                                if (scenario.requiredScenario != null && scenario.requiredScenario?.isEnabled == false) {
+                                    clickEvent.player.sendMessage("${KColors.RED}Das Szenario ${KColors.DARKRED}${scenario.requiredScenario?.name} ${KColors.RED}muss aktiviert sein.")
+                                    return@createRectCompound
+                                }
                             }
                         }
-                        clickEvent.guiInstance.reloadCurrentPage()
                         scenario.isEnabled = !scenario.isEnabled
-                        val text = if (scenario.isEnabled) "${KColors.LIME}enabled" else "${KColors.RED}disabled"
+                        val text = if (scenario.isEnabled) "${KColors.GREEN}enabled" else "${KColors.RED}disabled"
                         clickEvent.player.sendMessage("${KColors.DODGERBLUE}${scenario.name} ${KColors.WHITE}is now ${KColors.RED}$text")
+                        clickEvent.guiInstance.reloadCurrentPage()
                     })
                 compound.sortContentBy { it.name }
                 setScrollableCompoundLayout(compound)
