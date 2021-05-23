@@ -6,6 +6,7 @@ import de.hglabor.plugins.uhc.config.UHCConfig
 import de.hglabor.plugins.uhc.game.Scenario
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat
 import de.hglabor.plugins.uhc.player.PlayerList
+import de.hglabor.plugins.uhc.player.UHCPlayer
 import de.hglabor.plugins.uhc.team.UHCTeam
 import net.axay.kspigot.chat.KColors
 import net.axay.kspigot.event.listen
@@ -27,6 +28,7 @@ object Teams : Scenario("teams", ItemStack(Material.BELL)) {
     var maxTeamSize: Int = 1
     val teamList = mutableMapOf<Int, UHCTeam>()
     var currentTeamIndex = AtomicInteger()
+    val teamChat = mutableMapOf<UHCPlayer, Boolean>()
 
     fun addTeam(index: Int, team: UHCTeam) = run { teamList[index] = team; }
 
@@ -77,6 +79,8 @@ object Teams : Scenario("teams", ItemStack(Material.BELL)) {
         }
     }
 }
+
+val UHCPlayer.hasTeamChatToggled get() = Teams.teamChat[this] ?: false
 
 object TeamInventory {
     fun openGUI(player: Player) {
