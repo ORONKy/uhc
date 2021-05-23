@@ -103,6 +103,8 @@ class Uhc : KSpigot() {
         HostCommand()
         TeamCommand
         SendCoordsCommand
+        HelpOPCommand
+        KillTopCommand
     }
 
     private fun registerListener() {
