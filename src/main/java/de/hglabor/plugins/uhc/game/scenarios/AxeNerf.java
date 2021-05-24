@@ -36,7 +36,7 @@ public class AxeNerf extends Scenario {
     @Override
     protected void loadConfig() {
         super.loadConfig();
-        multiplier = UHCConfig.getInteger(CKeys.SCENARIOS + "." + getName() + "." + "multiplier");
+        multiplier = UHCConfig.getDouble(CKeys.SCENARIOS + "." + getName() + "." + "multiplier");
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
