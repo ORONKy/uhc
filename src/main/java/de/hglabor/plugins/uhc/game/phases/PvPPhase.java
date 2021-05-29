@@ -9,13 +9,15 @@ import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
 import de.hglabor.plugins.uhc.game.scenarios.Teams;
 import de.hglabor.plugins.uhc.game.scenarios.Timber;
 import de.hglabor.plugins.uhc.player.PlayerList;
+import de.hglabor.plugins.uhc.player.UHCPlayer;
 import de.hglabor.plugins.uhc.team.UHCTeam;
 import de.hglabor.utils.noriskutils.TimeConverter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-
-import java.util.concurrent.TimeUnit;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 public class PvPPhase extends IngamePhase implements Listener {
     protected PvPPhase() {
@@ -29,31 +31,30 @@ public class PvPPhase extends IngamePhase implements Listener {
     }
 
     @Override
-    protected void tick() {
-        Border border = Border.INSTANCE;
+    protected void tick(int timer) {
+        Border border = GameManager.INSTANCE.getBorder();
         if (Teams.INSTANCE.isEnabled()) {
-            UHCTeam[] existingTeams = (UHCTeam[]) Teams.INSTANCE.getTeamList().values().stream().filter(UHCTeam::isEliminated).toArray();
-            if (existingTeams.length == 1) {
+            if (Teams.INSTANCE.getTeamList().values().stream().filter(uhcTeam -> !uhcTeam.isEliminated()).count() == 1) {
                 startNextPhase();
             }
         } else {
-            //TODO glaube wenn man ausloggt wird man nicht irgendwie korrekt gedingst
             if (PlayerList.INSTANCE.getAlivePlayers().size() == 1) {
                 startNextPhase();
             }
         }
-        border.announceBorderShrink();
+        border.announceBorderShrink(timer);
         Bukkit.getOnlinePlayers().forEach(player -> {
             if (border.getBorderSize() > border.getShortestBorderSize()) {
-                player.sendActionBar(GlobalChat.hexColor("#EC2828") + "Next bordershrink " + border.getNextBorderSize() + " in: " + ChatColor.GRAY + TimeConverter.stringify(border.getNextShrinkTimeInSeconds()));
+                player.sendActionBar(GlobalChat.hexColor("#EC2828") + "Next bordershrink " + border.getNextBorderSize() + " in: " + ChatColor.GRAY + TimeConverter.stringify(border.getNextShrinkTime() - timer));
             }
         });
-        border.handleNextBorderShrink();
+        if (timer == border.getNextShrinkTime()) {
+            border.run(false);
+        }
     }
 
     @Override
-    public String getTimeString() {
-        int timer = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+    public String getTimeString(int timer) {
         if (timer >= 3600) {
             return GlobalChat.hexColor("#EC2828") + "Duration: " + GlobalChat.hexColor("#F45959") + TimeConverter.stringify(timer, "%02d:%02d:%02d");
         } else {

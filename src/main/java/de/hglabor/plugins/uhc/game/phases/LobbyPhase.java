@@ -6,7 +6,6 @@ import de.hglabor.plugins.uhc.config.UHCConfig;
 import de.hglabor.plugins.uhc.game.GameManager;
 import de.hglabor.plugins.uhc.game.GamePhase;
 import de.hglabor.plugins.uhc.game.PhaseType;
-import de.hglabor.plugins.uhc.game.mechanics.border.Border;
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
 import de.hglabor.plugins.uhc.game.scenarios.TeamInventory;
 import de.hglabor.plugins.uhc.game.scenarios.Teams;
@@ -16,6 +15,7 @@ import de.hglabor.utils.noriskutils.TimeConverter;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.World;
+import org.bukkit.WorldCreator;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -28,35 +28,39 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 
-import java.util.concurrent.TimeUnit;
-
 public class LobbyPhase extends GamePhase {
     private final World lobby;
 
     public LobbyPhase() {
         super(UHCConfig.getInteger(CKeys.LOBBY_START_TIME), PhaseType.LOBBY);
         this.lobby = Bukkit.getWorld("schematic");
-        this.lobby.setSpawnLocation(0, 104, 0);         //hardcoded lobby spawn
+        //hardcoded lobby spawn
+        this.lobby.setSpawnLocation(0, 104, 0);
         this.lobby.getWorldBorder().setSize(250);
     }
 
     @Override
     protected void init() {
-        this.maxPhaseTimeStamp = System.currentTimeMillis() + UHCConfig.getInteger(CKeys.LOBBY_START_TIME) * 1000L;
-        Border.INSTANCE.createBorder();
         Bukkit.getPluginManager().registerEvents(this, plugin);
         UHCConfig.setLobbySettings(lobby);
     }
 
     @Override
-    protected void tick() {
+    protected void tick(int timer) {
         if (Bukkit.getOnlinePlayers().isEmpty()) {
-            maxPhaseTimeStamp = System.currentTimeMillis() + UHCConfig.getInteger(CKeys.LOBBY_START_TIME) * 1000L;
+            GameManager.INSTANCE.resetTimer();
             return;
         }
-        if (maxPhaseTimeStamp - System.currentTimeMillis() <= 0) {
+        int timeLeft = maxPhaseTime - timer;
+        if (timeLeft == 0) {
             this.startNextPhase();
         }
+    }
+
+    @Override
+    public void startNextPhase() {
+        GameManager.INSTANCE.resetTimer();
+        super.startNextPhase();
     }
 
     @Override
@@ -65,9 +69,9 @@ public class LobbyPhase extends GamePhase {
     }
 
     @Override
-    public String getTimeString() {
-        long timeLeft = maxPhaseTimeStamp - System.currentTimeMillis();
-        return GlobalChat.hexColor("#EC2828") + "Start: " + GlobalChat.hexColor("#F45959") + TimeConverter.stringify((int) TimeUnit.MILLISECONDS.toSeconds(timeLeft));
+    public String getTimeString(int timer) {
+        int timeLeft = maxPhaseTime - timer;
+        return GlobalChat.hexColor("#EC2828") + "Start: " + GlobalChat.hexColor("#F45959") + TimeConverter.stringify(timeLeft);
     }
 
     @Override

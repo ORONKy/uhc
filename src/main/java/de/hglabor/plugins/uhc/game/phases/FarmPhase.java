@@ -24,10 +24,9 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 public class FarmPhase extends IngamePhase {
-    private final long finalHealTimeStamp;
+    private final int finalHeal;
     private final int broadcastSwitchTime;
     private int broadcastTime;
     private boolean wasFinalHeal;
@@ -35,7 +34,7 @@ public class FarmPhase extends IngamePhase {
 
     protected FarmPhase() {
         super(UHCConfig.getInteger(CKeys.FARM_FARM_TIME), PhaseType.FARM);
-        this.finalHealTimeStamp = System.currentTimeMillis() + UHCConfig.getInteger(CKeys.FARM_FINAL_HEAL) * 1000L;
+        this.finalHeal = UHCConfig.getInteger(CKeys.FARM_FINAL_HEAL);
         this.currentBroadcast = BroadcastType.BORDER;
         this.broadcastSwitchTime = UHCConfig.getInteger(CKeys.BROADCAST_NEW_TYPE);
     }
@@ -43,7 +42,6 @@ public class FarmPhase extends IngamePhase {
     @Override
     protected void init() {
         GameManager.INSTANCE.registerScenarioEvents();
-        Border.INSTANCE.init();
         Bukkit.getPluginManager().registerEvents(CombatLogger.INSTANCE, Uhc.Companion.getINSTANCE());
         Bukkit.broadcastMessage(GlobalChat.getPrefix() + GlobalChat.hexColor("#F45959") + "You are now able to relog");
         for (Player player : Bukkit.getOnlinePlayers()) {
@@ -61,11 +59,12 @@ public class FarmPhase extends IngamePhase {
     }
 
     @Override
-    protected void tick() {
-        announceNextPhase();
-        handleFinalHeal();
-        handleBroadcast();
-        if (System.currentTimeMillis() >= maxPhaseTimeStamp) {
+    protected void tick(int timer) {
+        announceNextPhase(timer);
+        handleFinalHeal(timer);
+
+        handleBroadcast(timer);
+        if (timer > maxPhaseTime) {
             this.startNextPhase();
         }
     }
@@ -73,20 +72,19 @@ public class FarmPhase extends IngamePhase {
     /**
      * lol
      */
-    private void handleBroadcast() {
+    private void handleBroadcast(int timer) {
         switch (currentBroadcast) {
             case BORDER:
                 Bukkit.getOnlinePlayers().forEach(player -> {
-                    player.sendActionBar(GlobalChat.hexColor("#EC2828") + "Next bordershrink " + Border.INSTANCE.getNextBorderSize() + " in: " + ChatColor.GRAY + TimeConverter.stringify(Border.INSTANCE.getNextShrinkTimeInSeconds()));
+                    Border border = GameManager.INSTANCE.getBorder();
+                    player.sendActionBar(GlobalChat.hexColor("#EC2828") + "Next bordershrink " + border.getNextBorderSize() + " in: " + ChatColor.GRAY + TimeConverter.stringify(border.getNextShrinkTime() - timer));
                 });
                 break;
             case FINALHEAL:
-                Bukkit.getOnlinePlayers().forEach(player -> player.sendActionBar(GlobalChat.hexColor("#EC2828") + "Final-Heal in: " + ChatColor.GRAY + TimeConverter.stringify((int) TimeUnit.MILLISECONDS.toSeconds(finalHealTimeStamp - System.currentTimeMillis()))));
+                Bukkit.getOnlinePlayers().forEach(player -> player.sendActionBar(GlobalChat.hexColor("#EC2828") + "Final-Heal in: " + ChatColor.GRAY + TimeConverter.stringify(finalHeal - timer)));
                 break;
             case INVINCIBILITY:
-                Bukkit.getOnlinePlayers().forEach(player -> {
-                    player.sendActionBar(GlobalChat.hexColor("#EC2828") + "Schutzzeit endet in: " + ChatColor.GRAY + TimeConverter.stringify((int) TimeUnit.MILLISECONDS.toSeconds(maxPhaseTimeStamp - System.currentTimeMillis())));
-                });
+                Bukkit.getOnlinePlayers().forEach(player -> player.sendActionBar(GlobalChat.hexColor("#EC2828") + "Schutzzeit endet in: " + ChatColor.GRAY + TimeConverter.stringify(maxPhaseTime - timer)));
                 break;
         }
 
@@ -108,38 +106,36 @@ public class FarmPhase extends IngamePhase {
         }
     }
 
-    private void handleFinalHeal() {
-        if (wasFinalHeal) {
-            return;
-        }
-        long timeLeft = finalHealTimeStamp - System.currentTimeMillis();
-        if (timeLeft <= 0) {
+    private void handleFinalHeal(int timer) {
+        if (wasFinalHeal) return;
+        int timeLeft = finalHeal - timer;
+        if (timeLeft == 0) {
             wasFinalHeal = true;
             Bukkit.getOnlinePlayers().forEach(player -> player.setHealth(20));
             Bukkit.broadcastMessage(GlobalChat.getPrefix() + GlobalChat.hexColor("#EC2828") + ChatColor.BOLD + "Final Heal");
-        } else if (TimeUnit.MILLISECONDS.toSeconds(timeLeft) % (2 * 60) == 0) {
-            String timeString = TimeConverter.stringify((int) TimeUnit.MILLISECONDS.toSeconds(timeLeft));
+        } else if (timeLeft % (2 * 60) == 0) {
+            String timeString = TimeConverter.stringify(timeLeft);
             Bukkit.broadcastMessage(GlobalChat.getPrefix() + GlobalChat.hexColor("#EC2828") + "Final-Heal in " + GlobalChat.hexColor("#F45959") + timeString);
         }
     }
 
-    public long getFinalHealTimeStamp() {
-        return finalHealTimeStamp;
+    public int getFinalHeal() {
+        return finalHeal;
     }
 
-    private void announceNextPhase() {
-        long timeLeft = maxPhaseTimeStamp - System.currentTimeMillis();
-        if (timeLeft <= 0) {
+    private void announceNextPhase(int timer) {
+        int timeLeft = maxPhaseTime - timer;
+        if (timeLeft == 0) {
             Bukkit.broadcastMessage(GlobalChat.getPrefix() + GlobalChat.hexColor("#EC2828") + ChatColor.BOLD + "PvP has been enabled");
         } else if (timeLeft % (5 * 60) == 0) {
-            String timeString = TimeConverter.stringify((int) TimeUnit.MILLISECONDS.toSeconds(timeLeft));
+            String timeString = TimeConverter.stringify(timeLeft);
             Bukkit.broadcastMessage(GlobalChat.getPrefix() + GlobalChat.hexColor("#EC2828") + "PvP enabled in " + GlobalChat.hexColor("#F45959") + timeString);
         }
     }
 
     @Override
-    public String getTimeString() {
-        return GlobalChat.hexColor("#EC2828") + "Duration: " + GlobalChat.hexColor("#F45959") + TimeConverter.stringify((int) TimeUnit.MILLISECONDS.toSeconds(maxPhaseTimeStamp - System.currentTimeMillis()));
+    public String getTimeString(int timer) {
+        return GlobalChat.hexColor("#EC2828") + "Duration: " + GlobalChat.hexColor("#F45959") + TimeConverter.stringify(timer);
     }
 
     @Override
@@ -156,13 +152,12 @@ public class FarmPhase extends IngamePhase {
 
     @EventHandler
     private void onEntityDamage(EntityDamageEvent event) {
-        if ((!(event.getEntity() instanceof Zombie))) {
-            return;
-        }
-        Zombie zombie = (Zombie) event.getEntity();
-        for (UUID uuid : CombatLogger.INSTANCE.inventories.keySet()) {
-            if (zombie.hasMetadata(uuid.toString())) {
-                event.setCancelled(true);
+        if ((event.getEntity() instanceof Zombie)) {
+            Zombie zombie = (Zombie) event.getEntity();
+            for (UUID uuid : CombatLogger.INSTANCE.inventories.keySet()) {
+                if (zombie.hasMetadata(uuid.toString())) {
+                    event.setCancelled(true);
+                }
             }
         }
     }

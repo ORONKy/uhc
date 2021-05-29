@@ -11,11 +11,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 public abstract class GamePhase implements Listener {
     protected final JavaPlugin plugin;
     protected final PlayerList playerList;
+    protected final int maxPhaseTime;
     protected final PhaseType type;
-    protected long maxPhaseTimeStamp;
 
     protected GamePhase(int maxPhaseTime, PhaseType type) {
-        this.maxPhaseTimeStamp = System.currentTimeMillis() + maxPhaseTime * 1000L;
+        this.maxPhaseTime = maxPhaseTime;
         this.type = type;
         this.plugin = Uhc.Companion.getINSTANCE();
         this.playerList = PlayerList.INSTANCE;
@@ -32,13 +32,17 @@ public abstract class GamePhase implements Listener {
     protected void init() {
     }
 
-    protected abstract void tick();
+    protected abstract void tick(int timer);
 
     public PhaseType getType() {
         return type;
     }
 
-    public abstract String getTimeString();
+    public int getRawTime() {
+        return GameManager.INSTANCE.getTimer();
+    }
+
+    public abstract String getTimeString(int timer);
 
     public int getAlivePlayers() {
         return (int) playerList.getAllPlayers().stream().filter(UHCPlayer::isAlive).count();
@@ -46,7 +50,7 @@ public abstract class GamePhase implements Listener {
 
     protected abstract GamePhase getNextPhase();
 
-    public long getMaxPhaseTimeStamp() {
-        return maxPhaseTimeStamp;
+    public int getMaxPhaseTime() {
+        return maxPhaseTime;
     }
 }

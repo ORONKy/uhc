@@ -2,7 +2,6 @@ package de.hglabor.plugins.uhc.scoreboard;
 
 import de.hglabor.plugins.uhc.game.GameManager;
 import de.hglabor.plugins.uhc.game.GamePhase;
-import de.hglabor.plugins.uhc.game.mechanics.border.Border;
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
 import de.hglabor.plugins.uhc.game.scenarios.Teams;
 import de.hglabor.plugins.uhc.player.PlayerList;
@@ -33,15 +32,15 @@ public final class ScoreboardManager implements Listener {
         ScoreboardFactory.addEntry(player, "time", "Start: " + TimeConverter.stringify(180), 4);
         ScoreboardFactory.addEntry(player, "players", "Players: " + Bukkit.getOnlinePlayers().size(), 3);
         ScoreboardFactory.addEntry(player, "kills", "Kills: 0", 2);
-        ScoreboardFactory.addEntry(player, "border", "Border: " + Border.INSTANCE.getBorderSize(), 1);
+        ScoreboardFactory.addEntry(player, "border", "Border: " + GameManager.INSTANCE.getBorder().getBorderSize(), 1);
         ScoreboardFactory.addEntry(player, "placeHolder1", placeHolder, 0);
     }
 
-    public static void updateForEveryone() {
+    public static void updateForEveryone(int time) {
         for (UHCPlayer uhcPlayer : PlayerList.INSTANCE.getAllPlayers()) {
             uhcPlayer.getBukkitPlayer().ifPresent(player -> {
                 GamePhase phase = GameManager.INSTANCE.getPhase();
-                ScoreboardFactory.updateEntry(uhcPlayer, "time", phase.getTimeString());
+                ScoreboardFactory.updateEntry(uhcPlayer, "time", phase.getTimeString(time));
                 ScoreboardFactory.updateEntry(uhcPlayer, "players", GlobalChat.hexColor("#EC2828") + "Players: " + GlobalChat.hexColor("#F45959") + phase.getAlivePlayers());
                 if (Teams.INSTANCE.isEnabled()) {
                     String prefix = GlobalChat.hexColor("#EC2828") + "Kills: " + GlobalChat.hexColor("#F45959") + uhcPlayer.getKills().get() + "[" + (uhcPlayer.getTeam() != null ? uhcPlayer.getTeam().getTeamKills() : uhcPlayer.getKills()) + "]";
@@ -49,7 +48,7 @@ public final class ScoreboardManager implements Listener {
                 } else {
                     ScoreboardFactory.updateEntry(uhcPlayer, "kills", GlobalChat.hexColor("#EC2828") + "Kills: " + GlobalChat.hexColor("#F45959") + uhcPlayer.getKills().get());
                 }
-                ScoreboardFactory.updateEntry(uhcPlayer, "border", Border.INSTANCE.getBorderString());
+                ScoreboardFactory.updateEntry(uhcPlayer, "border", GameManager.INSTANCE.getBorder().getBorderString(time));
             });
         }
     }
