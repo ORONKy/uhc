@@ -29,7 +29,7 @@ public abstract class IngamePhase extends GamePhase {
     }
 
     @Override
-    protected void tick(int timer) {
+    protected void tick() {
     }
 
     @EventHandler
@@ -113,7 +113,7 @@ public abstract class IngamePhase extends GamePhase {
     }
 
     @Override
-    public String getTimeString(int timer) {
+    public String getTimeString() {
         return null;
     }
 

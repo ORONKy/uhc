@@ -9,15 +9,13 @@ import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
 import de.hglabor.plugins.uhc.game.scenarios.Teams;
 import de.hglabor.plugins.uhc.game.scenarios.Timber;
 import de.hglabor.plugins.uhc.player.PlayerList;
-import de.hglabor.plugins.uhc.player.UHCPlayer;
 import de.hglabor.plugins.uhc.team.UHCTeam;
 import de.hglabor.utils.noriskutils.TimeConverter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
+
+import java.util.concurrent.TimeUnit;
 
 public class PvPPhase extends IngamePhase implements Listener {
     protected PvPPhase() {
@@ -31,31 +29,31 @@ public class PvPPhase extends IngamePhase implements Listener {
     }
 
     @Override
-    protected void tick(int timer) {
-        Border border = GameManager.INSTANCE.getBorder();
+    protected void tick() {
+        Border border = Border.INSTANCE;
         if (Teams.INSTANCE.isEnabled()) {
             UHCTeam[] existingTeams = (UHCTeam[]) Teams.INSTANCE.getTeamList().values().stream().filter(UHCTeam::isEliminated).toArray();
             if (existingTeams.length == 1) {
                 startNextPhase();
             }
         } else {
+            //TODO glaube wenn man ausloggt wird man nicht irgendwie korrekt gedingst
             if (PlayerList.INSTANCE.getAlivePlayers().size() == 1) {
                 startNextPhase();
             }
         }
-        border.announceBorderShrink(timer);
+        border.announceBorderShrink();
         Bukkit.getOnlinePlayers().forEach(player -> {
             if (border.getBorderSize() > border.getShortestBorderSize()) {
-                player.sendActionBar(GlobalChat.hexColor("#EC2828") + "Next bordershrink " + border.getNextBorderSize() + " in: " + ChatColor.GRAY + TimeConverter.stringify(border.getNextShrinkTime() - timer));
+                player.sendActionBar(GlobalChat.hexColor("#EC2828") + "Next bordershrink " + border.getNextBorderSize() + " in: " + ChatColor.GRAY + TimeConverter.stringify(border.getNextShrinkTimeInSeconds()));
             }
         });
-        if (timer == border.getNextShrinkTime()) {
-            border.run(false);
-        }
+        border.handleNextBorderShrink();
     }
 
     @Override
-    public String getTimeString(int timer) {
+    public String getTimeString() {
+        int timer = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
         if (timer >= 3600) {
             return GlobalChat.hexColor("#EC2828") + "Duration: " + GlobalChat.hexColor("#F45959") + TimeConverter.stringify(timer, "%02d:%02d:%02d");
         } else {

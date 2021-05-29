@@ -5,6 +5,7 @@ import de.hglabor.plugins.uhc.game.Scenario;
 import de.hglabor.plugins.uhc.game.mechanics.border.Border;
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
 import de.hglabor.plugins.uhc.game.phases.FarmPhase;
+import de.hglabor.plugins.uhc.util.TimeUtils;
 import de.hglabor.utils.noriskutils.TimeConverter;
 import dev.jorel.commandapi.CommandAPICommand;
 import org.bukkit.ChatColor;
@@ -21,28 +22,28 @@ public class InfoCommand {
                     player.sendMessage(strike + ChatColor.RESET + GlobalChat.hexColor("#EC2828") + "UHC" + strike);
                     switch (GameManager.INSTANCE.getPhaseType()) {
                         case LOBBY:
-                            player.sendMessage(GameManager.INSTANCE.getPhase().getTimeString(GameManager.INSTANCE.getTimer()));
+                            player.sendMessage(GameManager.INSTANCE.getPhase().getTimeString());
                             sendScenarios(player);
                             break;
                         case FARM:
                             FarmPhase phase = (FarmPhase) GameManager.INSTANCE.getPhase();
-                            int totalSecs = phase.getFinalHeal() - GameManager.INSTANCE.getTimer();
+                            int totalSecs = TimeUtils.getDiffInSeconds(phase.getFinalHealTimeStamp());
                             if (totalSecs < 0) {
-                                player.sendMessage( GlobalChat.hexColor("#EC2828") + "Final Heal: " + GlobalChat.hexColor("#F45959") + "✔");
+                                player.sendMessage(GlobalChat.hexColor("#EC2828") + "Final Heal: " + GlobalChat.hexColor("#F45959") + "✔");
                             } else {
-                                player.sendMessage( GlobalChat.hexColor("#EC2828") + "Final Heal: " + GlobalChat.hexColor("#F45959") + TimeConverter.stringify(totalSecs));
+                                player.sendMessage(GlobalChat.hexColor("#EC2828") + "Final Heal: " + GlobalChat.hexColor("#F45959") + TimeConverter.stringify(totalSecs));
                             }
-                            player.sendMessage( GlobalChat.hexColor("#EC2828") + "PvP in: " + GlobalChat.hexColor("#F45959") + TimeConverter.stringify(phase.getMaxPhaseTime() - GameManager.INSTANCE.getTimer()));
+                            player.sendMessage(GlobalChat.hexColor("#EC2828") + "PvP in: " + GlobalChat.hexColor("#F45959") + TimeConverter.stringify(TimeUtils.getDiffInSeconds(phase.getMaxPhaseTimeStamp())));
                             sendScenarios(player);
                             break;
                         case PVP:
-                            Border border = GameManager.INSTANCE.getBorder();
-                            int timeLeft = border.getNextShrinkTime() - GameManager.INSTANCE.getTimer();
+                            Border border = Border.INSTANCE;
+                            int timeLeft =  border.getNextShrinkTimeInSeconds();
                             if (timeLeft >= 0) {
-                                player.sendMessage( GlobalChat.hexColor("#EC2828") + "Current Border: " + GlobalChat.hexColor("#F45959") + border.getBorderSize());
-                                player.sendMessage( GlobalChat.hexColor("#EC2828") + "Next Border: " + GlobalChat.hexColor("#F45959") + border.getNextBorderSize() + " in " + TimeConverter.stringify(timeLeft));
+                                player.sendMessage(GlobalChat.hexColor("#EC2828") + "Current Border: " + GlobalChat.hexColor("#F45959") + border.getBorderSize());
+                                player.sendMessage(GlobalChat.hexColor("#EC2828") + "Next Border: " + GlobalChat.hexColor("#F45959") + border.getNextBorderSize() + " in " + TimeConverter.stringify(timeLeft));
                             } else {
-                                player.sendMessage( GlobalChat.hexColor("#EC2828") + "Final Border: " + GlobalChat.hexColor("#F45959") + border.getBorderSize());
+                                player.sendMessage(GlobalChat.hexColor("#EC2828") + "Final Border: " + GlobalChat.hexColor("#F45959") + border.getBorderSize());
                             }
                             sendScenarios(player);
                             break;

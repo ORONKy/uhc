@@ -1,11 +1,5 @@
 package de.hglabor.plugins.uhc.game.mechanics.border;
 
-import com.sk89q.worldedit.EditSession;
-import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.math.BlockVector3;
-import com.sk89q.worldedit.regions.CuboidRegion;
-import de.hglabor.plugins.uhc.Uhc;
 import de.hglabor.plugins.uhc.config.CKeys;
 import de.hglabor.plugins.uhc.config.UHCConfig;
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
@@ -13,50 +7,45 @@ import de.hglabor.plugins.uhc.player.PlayerList;
 import de.hglabor.plugins.uhc.player.UHCPlayer;
 import de.hglabor.utils.noriskutils.TimeConverter;
 import org.bukkit.*;
-import org.bukkit.entity.Player;
 
-public class Border {
-    private final int SHRINK_INTERVAL;
-    private final int BORDER_SHRINK_SIZE;
-    private final World overWorld;
-    private final int SHORTEST_BORDER_SIZE;
-    private int nextShrinkTime;
+import java.util.concurrent.TimeUnit;
+
+public final class Border {
+    public final static Border INSTANCE = new Border();
+
+    private World overWorld;
+    private long nextShrinkTime;
+    private long shrinkInterval;
+    private int borderShrinkSize;
+    private int shortestBorderSize;
     private int borderSize;
     private int nextBorderSize;
     private boolean cutInHalf;
 
-    public Border() {
-        this.nextShrinkTime = UHCConfig.getInteger(CKeys.BORDER_FIRST_SHRINK);
-        this.SHRINK_INTERVAL = UHCConfig.getInteger(CKeys.BORDER_SHRINK_INTERVAL);
-        this.BORDER_SHRINK_SIZE = UHCConfig.getInteger(CKeys.BORDER_SHRINK_SIZE);
-        this.borderSize = UHCConfig.getInteger(CKeys.BORDER_START_SIZE);
-        this.overWorld = Bukkit.getWorld("world");
-        this.SHORTEST_BORDER_SIZE = 25;
-        init();
-    }
-
-    private void init() {
-        overWorld.getWorldBorder().setDamageAmount(0);
-        overWorld.getWorldBorder().setDamageBuffer(0);
-        overWorld.getWorldBorder().setSize(borderSize * 2);
+    public void init() {
+        long currentTimeMillis = System.currentTimeMillis();
+        nextShrinkTime = currentTimeMillis + UHCConfig.getInteger(CKeys.BORDER_FIRST_SHRINK) * 1000L;
+        shrinkInterval = UHCConfig.getInteger(CKeys.BORDER_SHRINK_INTERVAL) * 1000L;
+        shortestBorderSize = 25;
         this.recalculateBorder();
     }
 
-    private void createBorder(World world, int borderSize, int startPoint, int height) {
-        com.sk89q.worldedit.world.World weWorld = BukkitAdapter.adapt(world);
-        try (EditSession editSession = WorldEdit.getInstance().getEditSessionFactory().getEditSession(weWorld, -1)) {
-            BlockVector3 negNeg = BukkitAdapter.asBlockVector(new Location(world, -borderSize, startPoint, -borderSize));
-            BlockVector3 posPos = BukkitAdapter.asBlockVector(new Location(world, borderSize, startPoint + height, borderSize));
-            CuboidRegion region = new CuboidRegion(weWorld, negNeg, posPos);
-            editSession.setFastMode(true);
-            editSession.makeCuboidWalls(region, BukkitAdapter.asBlockType(Material.BEDROCK));
+    public void createBorder() {
+        borderShrinkSize = UHCConfig.getInteger(CKeys.BORDER_SHRINK_SIZE);
+        borderSize = UHCConfig.getInteger(CKeys.BORDER_START_SIZE);
+        overWorld = Bukkit.getWorld("world");
+        if (overWorld != null) {
+            overWorld.getWorldBorder();
+            overWorld.getWorldBorder().setDamageAmount(0);
+            overWorld.getWorldBorder().setDamageBuffer(0);
+            overWorld.getWorldBorder().setSize(borderSize * 2);
         }
     }
 
     public void run(boolean force) {
-        if (borderSize > SHORTEST_BORDER_SIZE) {
+        if (borderSize > shortestBorderSize) {
             if (!force) {
-                nextShrinkTime += SHRINK_INTERVAL;
+                nextShrinkTime += shrinkInterval;
             }
             borderSize = nextBorderSize;
             recalculateBorder();
@@ -66,6 +55,12 @@ public class Border {
             }
             overWorld.getWorldBorder().setSize(borderSize * 2);
             teleportToCorner();
+        }
+    }
+
+    public void handleNextBorderShrink() {
+        if (System.currentTimeMillis() >= getNextShrinkTime()) {
+            run(false);
         }
     }
 
@@ -97,18 +92,10 @@ public class Border {
         }
     }
 
-    private void borderPacket() {
-        Bukkit.getScheduler().runTaskTimer(Uhc.Companion.getINSTANCE(), () -> {
-            for (Player player : Bukkit.getOnlinePlayers()) {
-                isNearBorder(player, 10);
-            }
-        }, 0, 5);
-    }
-
     private void recalculateBorder() {
         if (borderSize > 500) {
-            nextBorderSize = Math.max(borderSize - BORDER_SHRINK_SIZE, 400);
-        } else if (borderSize > SHORTEST_BORDER_SIZE) {
+            nextBorderSize = Math.max(borderSize - borderShrinkSize, 400);
+        } else if (borderSize > getShortestBorderSize()) {
             if (!cutInHalf) {
                 cutInHalf = true;
                 nextBorderSize = 400;
@@ -117,14 +104,13 @@ public class Border {
         }
     }
 
-    public void announceBorderShrink(int time) {
-        if (borderSize <= 25) return;
-        int timeLeft = nextShrinkTime - time;
+    public void announceBorderShrink() {
+        if (borderSize <= getShortestBorderSize()) {
+            return;
+        }
+        int timeLeft = getNextShrinkTimeInSeconds();
         if (timeLeft <= 300) {
             if (timeLeft % 60 == 0 || timeLeft <= 5 || timeLeft == 10) {
-              /*   ChatUtils.broadcastMessage("border.shrink", ImmutableMap.of(
-                        "size", String.valueOf(nextBorderSize),
-                        "time", TimeConverter.stringify(timeLeft)));*/
                 Bukkit.broadcastMessage(GlobalChat.hexColor("#EC2828") + "Border will be shrinked to " +
                         ChatColor.RED + ChatColor.BOLD + nextBorderSize + "x" + nextBorderSize + ChatColor.RESET + GlobalChat.hexColor("#EC2828") +
                         " in " + GlobalChat.hexColor("#F45959") + TimeConverter.stringify(timeLeft));
@@ -132,11 +118,15 @@ public class Border {
         }
     }
 
-    public int getNextShrinkTime() {
+    public long getNextShrinkTime() {
         return nextShrinkTime;
     }
 
-    public String getBorderString(int time) {
+    public int getNextShrinkTimeInSeconds() {
+        return (int) TimeUnit.MILLISECONDS.toSeconds(getNextShrinkTime() - System.currentTimeMillis());
+    }
+
+    public String getBorderString() {
         return GlobalChat.hexColor("#EC2828") + "Border: " + GlobalChat.hexColor("#F45959") + borderSize;
     }
 
@@ -148,58 +138,7 @@ public class Border {
         return nextBorderSize;
     }
 
-    private boolean isNearBorder(Player player, int puffer) {
-        Location location = player.getLocation();
-        if (borderSize - Math.abs(location.getBlockX()) < puffer) {
-            Location toChange = new Location(overWorld, borderSize * convert(location.getX()), location.getBlockY(), location.getZ());
-            int size = 2;
-            for (int y = -size; y <= size; y++) {
-                for (int z = -size; z <= size; z++) {
-                    Location newState = toChange.clone().add(0, y, z);
-                    sendBlockChange(player, newState);
-                    Bukkit.getScheduler().runTaskLater(Uhc.Companion.getINSTANCE(), () -> removeBlockChange(player, newState, puffer), 2);
-                }
-            }
-        }
-
-        if (borderSize - Math.abs(location.getBlockZ()) < puffer) {
-            Location toChange = new Location(overWorld, location.getX(), location.getBlockY(), borderSize * convert(location.getZ()));
-            int size = 2;
-            for (int y = -size; y <= size; y++) {
-                for (int x = -size; x <= size; x++) {
-                    Location newState = toChange.clone().add(x, y, 0);
-                    sendBlockChange(player, newState);
-                    Bukkit.getScheduler().runTaskLater(Uhc.Companion.getINSTANCE(), () -> removeBlockChange(player, newState, puffer), 2);
-                }
-            }
-        }
-
-        return true;
-    }
-
-    private void sendBlockChange(Player player, Location location) {
-        if (location.getBlock().isSolid()) return;
-        player.sendBlockChange(location, Material.RED_STAINED_GLASS.createBlockData());
-    }
-
-    private void removeBlockChange(Player player, Location location, int puffer) {
-        double v = location.distanceSquared(player.getLocation());
-        if (v > puffer * puffer) {
-            player.sendBlockChange(location, location.getBlock().getBlockData());
-        } else {
-            Bukkit.getScheduler().runTaskLater(Uhc.Companion.getINSTANCE(), () -> removeBlockChange(player, location, puffer), 2);
-        }
-    }
-
     public int getShortestBorderSize() {
-        return SHORTEST_BORDER_SIZE;
-    }
-
-    private int convert(double coord) {
-        if (coord < 0) {
-            return -1;
-        } else {
-            return 1;
-        }
+        return shortestBorderSize;
     }
 }
