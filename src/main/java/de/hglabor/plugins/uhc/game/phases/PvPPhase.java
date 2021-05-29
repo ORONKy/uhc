@@ -32,7 +32,8 @@ public class PvPPhase extends IngamePhase implements Listener {
     protected void tick() {
         Border border = Border.INSTANCE;
         if (Teams.INSTANCE.isEnabled()) {
-            if (Teams.INSTANCE.getTeamList().values().stream().filter(uhcTeam -> !uhcTeam.isEliminated()).count() == 1) {
+            UHCTeam[] existingTeams = (UHCTeam[]) Teams.INSTANCE.getTeamList().values().stream().filter(UHCTeam::isEliminated).toArray();
+            if (existingTeams.length == 1) {
                 startNextPhase();
             }
         } else {

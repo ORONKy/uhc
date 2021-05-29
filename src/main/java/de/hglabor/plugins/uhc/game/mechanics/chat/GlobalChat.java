@@ -3,7 +3,6 @@ package de.hglabor.plugins.uhc.game.mechanics.chat;
 import de.hglabor.plugins.uhc.player.PlayerList;
 import de.hglabor.plugins.uhc.player.UHCPlayer;
 import de.hglabor.plugins.uhc.game.scenarios.Teams;
-import net.axay.kspigot.chat.KColors;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -56,17 +55,6 @@ public class GlobalChat implements Listener {
         Player player = event.getPlayer();
         UHCPlayer uhcPlayer = PlayerList.INSTANCE.getPlayer(player);
         int teamIndex = uhcPlayer.getTeamIndex();
-
-        if (Teams.INSTANCE.isEnabled()) {
-            if (teamIndex != -1) {
-                if (Teams.INSTANCE.getTeamChat().containsKey(uhcPlayer) && Teams.INSTANCE.getTeamChat().get(uhcPlayer)) {
-                    uhcPlayer.getTeam().getPlayers().forEach(uhcTeamPlayer -> uhcTeamPlayer.getBukkitPlayer().ifPresent(teamPlayer ->
-                            teamPlayer.sendMessage(KColors.DARKGRAY + "[" + KColors.LIGHTSEAGREEN + "TEAM" + KColors.DARKGRAY + "] "
-                                    + KColors.DEEPSKYBLUE + player.getName() + KColors.WHITE + ": " + KColors.LIGHTSKYBLUE + event.getMessage())));
-                    return;
-                }
-            }
-        }
 
         event.setFormat((Teams.INSTANCE.isEnabled() && teamIndex != -1 ? "Team[" + teamIndex + "] " : "") + chatFormat);
 

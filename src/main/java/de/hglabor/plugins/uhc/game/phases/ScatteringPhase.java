@@ -54,10 +54,6 @@ public class ScatteringPhase extends GamePhase {
         if (Teams.INSTANCE.isEnabled()) {
             Teams.INSTANCE.fillTeams();
         }
-        playerList.getLobbyPlayers().forEach(uhcPlayer -> {
-            uhcPlayer.setStatus(UserStatus.SCATTERING);
-            uhcPlayer.getBukkitPlayer().ifPresent(player -> player.getInventory().clear());
-        });
         playerScattering.runTaskTimer(Uhc.Companion.getINSTANCE(), 0, teleportDelay);
     }
 

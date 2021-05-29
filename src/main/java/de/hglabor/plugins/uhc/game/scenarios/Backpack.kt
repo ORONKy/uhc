@@ -8,7 +8,6 @@ import dev.jorel.commandapi.executors.PlayerCommandExecutor
 import org.bukkit.Material
 
 object Backpack : Scenario("Backpack", ItemBuilder(Material.ENDER_CHEST).build()) {
-    override val requiredScenario = Teams
     init {
         CommandAPICommand("backpack")
             .withAliases("bp")

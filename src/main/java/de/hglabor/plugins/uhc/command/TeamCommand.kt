@@ -2,9 +2,7 @@ package de.hglabor.plugins.uhc.command
 
 import de.hglabor.plugins.uhc.game.GameManager
 import de.hglabor.plugins.uhc.game.PhaseType
-import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat
 import de.hglabor.plugins.uhc.game.scenarios.Teams
-import de.hglabor.plugins.uhc.game.scenarios.hasTeamChatToggled
 import de.hglabor.plugins.uhc.player.PlayerList
 import de.hglabor.plugins.uhc.team.UHCTeam
 import dev.jorel.commandapi.CommandAPICommand
@@ -91,13 +89,6 @@ object TeamCommand {
                 CommandAPICommand("haha")
                     .executesPlayer(PlayerCommandExecutor { it, _ ->
                         it.sendMessage("${KColors.MEDIUMVIOLETRED}Wieso führst du diesen Command aus?")
-                    })
-            ).withSubcommand(
-                CommandAPICommand("togglechat")
-                    .executesPlayer(PlayerCommandExecutor { player, _ ->
-                        val uhcPlayer = PlayerList.INSTANCE.getPlayer(player)
-                        Teams.teamChat[uhcPlayer] = !uhcPlayer.hasTeamChatToggled
-                        player.sendMessage("${GlobalChat.getPrefix()}Du schreibst nun standardmäßig im ${if (uhcPlayer.hasTeamChatToggled) "${KColors.GREEN}Teamchat" else "${KColors.TOMATO}öffentlichen Chat"}")
                     })
             ).register()
     }
