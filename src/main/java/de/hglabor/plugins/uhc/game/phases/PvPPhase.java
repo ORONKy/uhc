@@ -18,13 +18,17 @@ import org.bukkit.event.Listener;
 import java.util.concurrent.TimeUnit;
 
 public class PvPPhase extends IngamePhase implements Listener {
-    protected PvPPhase() {
+    private final int farmPhaseDuration;
+    private final long startTimeStamp;
+
+    protected PvPPhase(int farmPhaseDuration) {
         super(0, PhaseType.PVP);
+        this.farmPhaseDuration = farmPhaseDuration;
+        this.startTimeStamp = System.currentTimeMillis();
     }
 
     @Override
     protected void init() {
-        Timber.INSTANCE.setEnabled(false);
         GameManager.INSTANCE.getScenarios().stream().filter(Scenario::isEnabled).forEach(Scenario::onPvPPhase);
     }
 
@@ -53,7 +57,7 @@ public class PvPPhase extends IngamePhase implements Listener {
 
     @Override
     public String getTimeString() {
-        int timer = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis());
+        int timer = (int) TimeUnit.MILLISECONDS.toSeconds(System.currentTimeMillis() - startTimeStamp) + farmPhaseDuration;
         if (timer >= 3600) {
             return GlobalChat.hexColor("#EC2828") + "Duration: " + GlobalChat.hexColor("#F45959") + TimeConverter.stringify(timer, "%02d:%02d:%02d");
         } else {
@@ -62,5 +66,7 @@ public class PvPPhase extends IngamePhase implements Listener {
     }
 
     @Override
-    protected GamePhase getNextPhase() { return EndPhase.INSTANCE; }
+    protected GamePhase getNextPhase() {
+        return EndPhase.INSTANCE;
+    }
 }

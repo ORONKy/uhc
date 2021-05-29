@@ -27,6 +27,11 @@ public class Timber extends Scenario {
         }
     }
 
+    @Override
+    public void onPvPPhase() {
+        this.setEnabled(false);
+    }
+
     public void breakSurroundingWood(Block block, int amount) {
         String blockTypeName = block.getType().name().toLowerCase();
 

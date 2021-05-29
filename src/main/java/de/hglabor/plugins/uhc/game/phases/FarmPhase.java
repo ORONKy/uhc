@@ -144,7 +144,7 @@ public class FarmPhase extends IngamePhase {
 
     @Override
     protected GamePhase getNextPhase() {
-        return new PvPPhase();
+        return new PvPPhase(UHCConfig.getInteger(CKeys.FARM_FARM_TIME));
     }
 
     @EventHandler

@@ -72,6 +72,7 @@ class Uhc : KSpigot() {
         gameManager.addScenario(NoFall)
         gameManager.addScenario(PiggyBack)
         gameManager.addScenario(SharedHealth)
+        gameManager.addScenario(RemoveOpGapp)
         gameManager.run()
         gameManager.enableScenarios()
 
