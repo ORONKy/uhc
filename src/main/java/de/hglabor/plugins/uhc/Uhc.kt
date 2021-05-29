@@ -35,7 +35,7 @@ class Uhc : KSpigot() {
         DataPackUtils.generateNewWorld(homeDir, "de.hglabor.uhc.worldgenerator")
 
         val gameManager = GameManager.INSTANCE
-        gameManager.addScenario(BloodDiamondsNetherite)
+        gameManager.addScenario(BloodDiamondsNetherite.INSTANCE)
         gameManager.addScenario(CrossBowless.INSTANCE)
         gameManager.addScenario(CutClean.INSTANCE)
         gameManager.addScenario(Fireless.INSTANCE)
@@ -53,24 +53,16 @@ class Uhc : KSpigot() {
         gameManager.addScenario(ColdWeapons.INSTANCE)
         gameManager.addScenario(HealingKill.INSTANCE)
         gameManager.addScenario(Horseless.INSTANCE)
-        gameManager.addScenario(EnchantedDeath)
+        gameManager.addScenario(EnchantedDeath.INSTANCE)
         gameManager.addScenario(DoubleOres.INSTANCE)
-        gameManager.addScenario(DoubleHealth)
-        gameManager.addScenario(FlowerPower)
+        gameManager.addScenario(DoubleHealth.INSTANCE)
+        gameManager.addScenario(FlowerPower.INSTANCE)
         gameManager.addScenario(Teams)
         gameManager.addScenario(Shieldless.INSTANCE)
-        gameManager.addScenario(DoNotDisturb)
+        gameManager.addScenario(DoNotDisturb.INSTANCE)
         gameManager.addScenario(Potionless.INSTANCE)
         gameManager.addScenario(OldKnockback.INSTANCE)
         gameManager.addScenario(Backpack)
-        gameManager.addScenario(GappleRoulette)
-        gameManager.addScenario(Goldless)
-        gameManager.addScenario(AxeNerf.INSTANCE)
-        gameManager.addScenario(HealthAcceleration)
-        gameManager.addScenario(Kings)
-        gameManager.addScenario(NoFall)
-        gameManager.addScenario(PiggyBack)
-        gameManager.addScenario(SharedHealth)
         gameManager.run()
         gameManager.enableScenarios()
 
@@ -103,8 +95,6 @@ class Uhc : KSpigot() {
         HostCommand()
         TeamCommand
         SendCoordsCommand
-        HelpOPCommand
-        KillTopCommand
     }
 
     private fun registerListener() {
