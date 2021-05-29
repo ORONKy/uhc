@@ -58,7 +58,7 @@ public class PlayerScattering extends BukkitRunnable {
                 Set<Scenario> scenarios = GameManager.INSTANCE.getScenarios();
                 String strike = ChatColor.RESET.toString() + ChatColor.STRIKETHROUGH + "               ";
                 Bukkit.getOnlinePlayers().forEach(player -> {
-                    player.sendTitle("", "Game starts in " + TimeConverter.stringify(60),20,60,20);
+                    player.sendTitle("", "Game starts in " + TimeConverter.stringify(60), 20, 60, 20);
                     player.sendMessage(strike + ChatColor.RESET + GlobalChat.hexColor("#EC2828") + "UHC" + strike);
                     player.sendMessage(ChatColor.DARK_RED + "Scenarios:");
                     scenarios.stream().filter(Scenario::isEnabled).map(scenario -> GlobalChat.hexColor("#F45959") + " - " + ChatColor.BLUE + scenario.getName()).forEach(player::sendMessage);

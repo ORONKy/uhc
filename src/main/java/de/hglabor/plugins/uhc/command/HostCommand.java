@@ -9,7 +9,7 @@ import org.bukkit.entity.Player;
 public class HostCommand {
     public HostCommand() {
         new CommandAPICommand("host")
-                .withPermission("hglabor.forcestart")
+                .withPermission("hglabor.uhc.host")
                 .withRequirement((commandSender) -> GameManager.INSTANCE.getPhaseType().equals(PhaseType.LOBBY))
                 .withRequirement(commandSender -> commandSender instanceof Player)
                 .executesPlayer((player, objects) -> {

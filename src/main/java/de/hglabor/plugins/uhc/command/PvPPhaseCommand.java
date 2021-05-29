@@ -12,7 +12,7 @@ import org.bukkit.entity.Player;
 public class PvPPhaseCommand {
     public PvPPhaseCommand() {
         new CommandAPICommand("pvpphase")
-                .withPermission("hglabor.forcestart")
+                .withPermission("hglabor.uhc.host")
                 .withRequirement(commandSender -> {
                     if (commandSender.isOp()) return true;
                     if (commandSender instanceof Player) {
