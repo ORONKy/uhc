@@ -2,23 +2,24 @@ package de.hglabor.plugins.uhc.game.scenarios
 
 import de.hglabor.plugins.uhc.Uhc.Companion.INSTANCE
 import de.hglabor.plugins.uhc.config.CKeys
-import de.hglabor.plugins.uhc.config.ConfigInventory.openGUI
 import de.hglabor.plugins.uhc.config.UHCConfig
 import de.hglabor.plugins.uhc.game.Scenario
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat
 import de.hglabor.plugins.uhc.player.PlayerList
+import de.hglabor.plugins.uhc.player.UHCPlayer
 import de.hglabor.plugins.uhc.team.UHCTeam
 import net.axay.kspigot.chat.KColors
 import net.axay.kspigot.event.listen
-import net.axay.kspigot.gui.*
-import net.axay.kspigot.items.*
+import net.axay.kspigot.gui.GUIType
+import net.axay.kspigot.gui.Slots
+import net.axay.kspigot.gui.kSpigotGUI
+import net.axay.kspigot.gui.openGUI
+import net.axay.kspigot.items.itemStack
+import net.axay.kspigot.items.meta
+import net.axay.kspigot.items.name
 import org.bukkit.Material
-import org.bukkit.enchantments.Enchantment
 import org.bukkit.entity.Player
-import org.bukkit.event.EventHandler
 import org.bukkit.event.entity.EntityDamageByEntityEvent
-import org.bukkit.event.player.PlayerInteractEvent
-import org.bukkit.inventory.ItemFlag
 import org.bukkit.inventory.ItemStack
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -27,10 +28,11 @@ object Teams : Scenario("teams", ItemStack(Material.BELL)) {
     var maxTeamSize: Int = 1
     val teamList = mutableMapOf<Int, UHCTeam>()
     var currentTeamIndex = AtomicInteger()
+    val teamChat = mutableMapOf<UHCPlayer, Boolean>()
 
     fun addTeam(index: Int, team: UHCTeam) = run { teamList[index] = team; }
 
-    override fun isEnabled() = super.isEnabled() && maxTeamSize > 1
+    override var isEnabled = super.isEnabled && maxTeamSize > 1
 
     override fun saveToConfig() {
         INSTANCE.config.addDefault(CKeys.SCENARIOS + "." + name + "." + "teamSize", maxTeamSize)
@@ -77,6 +79,8 @@ object Teams : Scenario("teams", ItemStack(Material.BELL)) {
         }
     }
 }
+
+val UHCPlayer.hasTeamChatToggled get() = Teams.teamChat[this] ?: false
 
 object TeamInventory {
     fun openGUI(player: Player) {
