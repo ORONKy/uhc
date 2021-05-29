@@ -3,7 +3,6 @@ package de.hglabor.plugins.uhc.command;
 import de.hglabor.plugins.uhc.config.UHCConfig;
 import de.hglabor.plugins.uhc.game.GameManager;
 import de.hglabor.plugins.uhc.game.PhaseType;
-import de.hglabor.plugins.uhc.game.mechanics.border.Border;
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
 import de.hglabor.utils.noriskutils.PermissionUtils;
 import dev.jorel.commandapi.CommandAPICommand;
@@ -21,7 +20,7 @@ public class BorderCommand {
                     return true;
                 })
                 .executesPlayer((player, objects) -> {
-                    Border.INSTANCE.run(true);
+                    GameManager.INSTANCE.getBorder().run(true);
                     player.sendMessage(GlobalChat.getPrefix() + "Border wurde geshrinkt.");
                 }).register();
     }

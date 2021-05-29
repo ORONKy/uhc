@@ -3,7 +3,6 @@ package de.hglabor.plugins.uhc.game.mechanics;
 import de.hglabor.plugins.uhc.Uhc;
 import de.hglabor.plugins.uhc.game.GameManager;
 import de.hglabor.plugins.uhc.game.Scenario;
-import de.hglabor.plugins.uhc.game.mechanics.border.Border;
 import de.hglabor.plugins.uhc.game.mechanics.border.Corner;
 import de.hglabor.plugins.uhc.game.mechanics.chat.GlobalChat;
 import de.hglabor.plugins.uhc.game.scenarios.Teams;
@@ -58,7 +57,7 @@ public class PlayerScattering extends BukkitRunnable {
                 Set<Scenario> scenarios = GameManager.INSTANCE.getScenarios();
                 String strike = ChatColor.RESET.toString() + ChatColor.STRIKETHROUGH + "               ";
                 Bukkit.getOnlinePlayers().forEach(player -> {
-                    player.sendTitle("", "Game starts in " + TimeConverter.stringify(60),20,60,20);
+                    player.sendTitle("", "Game starts in " + TimeConverter.stringify(60), 20, 60, 20);
                     player.sendMessage(strike + ChatColor.RESET + GlobalChat.hexColor("#EC2828") + "UHC" + strike);
                     player.sendMessage(ChatColor.DARK_RED + "Scenarios:");
                     scenarios.stream().filter(Scenario::isEnabled).map(scenario -> GlobalChat.hexColor("#F45959") + " - " + ChatColor.BLUE + scenario.getName()).forEach(player::sendMessage);
@@ -104,6 +103,6 @@ public class PlayerScattering extends BukkitRunnable {
         }
 
         if (cornerCounter.get() > 4) cornerCounter.set(1);
-        return SpawnUtils.getCornerSpawn(Corner.getCorner(cornerCounter.getAndIncrement()), Border.INSTANCE.getBorderSize());
+        return SpawnUtils.getCornerSpawn(Corner.getCorner(cornerCounter.getAndIncrement()), GameManager.INSTANCE.getBorder().getBorderSize());
     }
 }

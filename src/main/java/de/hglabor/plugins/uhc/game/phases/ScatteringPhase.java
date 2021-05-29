@@ -41,6 +41,7 @@ public class ScatteringPhase extends GamePhase {
     @Override
     protected void init() {
         GlobalChat.INSTANCE.enable(false);
+        // MobRemover.INSTANCE.enable(world);
         UHCConfig.setPvPWorldSettings(world);
         playerList.getLobbyPlayers().forEach(uhcPlayer -> {
             uhcPlayer.setStatus(UserStatus.SCATTERING);
@@ -54,15 +55,20 @@ public class ScatteringPhase extends GamePhase {
         if (Teams.INSTANCE.isEnabled()) {
             Teams.INSTANCE.fillTeams();
         }
+        playerList.getLobbyPlayers().forEach(uhcPlayer -> {
+            uhcPlayer.setStatus(UserStatus.SCATTERING);
+            uhcPlayer.getBukkitPlayer().ifPresent(player -> player.getInventory().clear());
+        });
         playerScattering.runTaskTimer(Uhc.Companion.getINSTANCE(), 0, teleportDelay);
     }
 
     @Override
-    protected void tick() {
+    protected void tick(int timer) {
+        GameManager.INSTANCE.resetTimer();
     }
 
     @Override
-    public String getTimeString() {
+    public String getTimeString(int timer) {
         return GlobalChat.hexColor("#EC2828") + "Loading: " + GlobalChat.hexColor("#F45959") + playerList.getAlivePlayers().size() + "/" + maxPlayers;
     }
 

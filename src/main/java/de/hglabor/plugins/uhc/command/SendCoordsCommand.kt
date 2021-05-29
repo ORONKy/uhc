@@ -13,7 +13,6 @@ object SendCoordsCommand {
     init {
         CommandAPICommand("sendcoords")
             .withAliases("sc")
-            .withPermission("hglabor.forcestart")
             .withRequirement { GameManager.INSTANCE.phaseType == PhaseType.FARM || GameManager.INSTANCE.phaseType == PhaseType.PVP }
             .withRequirement { commandSender -> commandSender is Player }
             .withRequirement { Teams.isEnabled }
