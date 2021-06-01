@@ -35,9 +35,15 @@ public class PvPPhase extends IngamePhase implements Listener {
     @Override
     protected void tick() {
         Border border = Border.INSTANCE;
+        border.announceBorderShrink();
+        Bukkit.getOnlinePlayers().forEach(player -> {
+            if (border.getBorderSize() > border.getShortestBorderSize()) {
+                player.sendActionBar(GlobalChat.hexColor("#EC2828") + "Next bordershrink " + border.getNextBorderSize() + " in: " + ChatColor.GRAY + TimeConverter.stringify(border.getNextShrinkTimeInSeconds()));
+            }
+        });
+        border.handleNextBorderShrink();
         if (Teams.INSTANCE.isEnabled()) {
-            UHCTeam[] existingTeams = (UHCTeam[]) Teams.INSTANCE.getTeamList().values().stream().filter(UHCTeam::isEliminated).toArray();
-            if (existingTeams.length == 1) {
+            if (Teams.INSTANCE.getTeamList().values().stream().filter(uhcTeam -> !uhcTeam.isEliminated()).count() == 1) {
                 startNextPhase();
             }
         } else {
@@ -46,13 +52,6 @@ public class PvPPhase extends IngamePhase implements Listener {
                 startNextPhase();
             }
         }
-        border.announceBorderShrink();
-        Bukkit.getOnlinePlayers().forEach(player -> {
-            if (border.getBorderSize() > border.getShortestBorderSize()) {
-                player.sendActionBar(GlobalChat.hexColor("#EC2828") + "Next bordershrink " + border.getNextBorderSize() + " in: " + ChatColor.GRAY + TimeConverter.stringify(border.getNextShrinkTimeInSeconds()));
-            }
-        });
-        border.handleNextBorderShrink();
     }
 
     @Override
