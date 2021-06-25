@@ -73,6 +73,7 @@ class Uhc : KSpigot() {
         gameManager.addScenario(PiggyBack)
         gameManager.addScenario(SharedHealth)
         gameManager.addScenario(RemoveOpGapp)
+        gameManager.addScenario(PoisonWater)
         gameManager.run()
         gameManager.enableScenarios()
 
